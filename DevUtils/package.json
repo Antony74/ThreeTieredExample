@@ -16,6 +16,9 @@
         "jshint":  "2.8.0",
         "mocha": "2.3.4"
     },
+    "scripts": {
+        "lint": "jshint --extract auto --extra-ext .html ../. || true"
+    },
     "version": "1.0.0",
     "readme": "Development dependencies for ThreeTieredExample.",
     "bugs": {
