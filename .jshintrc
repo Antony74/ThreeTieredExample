@@ -1,0 +1,28 @@
+//
+// Command to install jshint:
+//
+// npm install -g jshint
+//
+// Command to lint everything recusively, including the <script> tags in html files:
+//
+// jshint --extract auto --extra-ext .html .
+//
+// Options:
+{
+    "bitwise"   : true,
+    "camelcase" : true,
+    "curly"     : true,
+    "eqeqeq"    : true,
+    "forin"     : true,
+    "indent"    : 4,
+    "latedef"   : "nofunc",
+    "noarg"     : true,
+    "node"      : true,
+    "noempty"   : true,
+    "nonbsp"    : true,
+    "quotmark"  : "single",
+    "strict"    : false,
+    "undef"     : true,
+    "unused"    : true,
+	"predef"    : []
+}

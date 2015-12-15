@@ -1,0 +1,24 @@
+{
+    "name": "ThreeTieredExample-DevUtils",
+    "description": "Development dependencies for ThreeTieredExample.",
+    "url": "http://github.com/Antony74/ThreeTieredExample/DevUtils",
+    "author": {
+        "name": "Antony Bartlett",
+        "email": "akb@akb.me.uk"
+    },
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/Antony74/ThreeTieredExample/DevUtils"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "faker": "3.0.1",
+        "jshint":  "2.8.0",
+        "mocha": "2.3.4"
+    },
+    "version": "1.0.0",
+    "readme": "Development dependencies for ThreeTieredExample.",
+    "bugs": {
+    "url": "https://github.com/Antony74/ThreeTieredExample/issues"
+    }
+}

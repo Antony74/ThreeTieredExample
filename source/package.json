@@ -1,0 +1,22 @@
+{
+    "name": "ThreeTieredExample",
+    "description": "Three tiered example.",
+    "url": "http://github.com/Antony74/ThreeTieredExample",
+    "author": {
+        "name": "Antony Bartlett",
+        "email": "akb@akb.me.uk"
+    },
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/Antony74/ThreeTieredExample"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "express": "4.13.1"
+    },
+    "version": "1.0.0",
+    "readme": "Three tiered example.",
+    "bugs": {
+        "url": "https://github.com/Antony74/ThreeTieredExample/issues"
+    }
+}
