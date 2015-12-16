@@ -14,10 +14,11 @@
     "dependencies": {
         "faker": "3.0.1",
         "jshint":  "2.8.0",
-        "mocha": "2.3.4"
+        "mocha": "2.3.4",
+		"true": "0.0.2"
     },
     "scripts": {
-        "lint": "jshint --extract auto --extra-ext .html ../. || true"
+        "lint": "jshint --extract auto --extra-ext .html ../. || node node_modules/true/index.js"
     },
     "version": "1.0.0",
     "readme": "Development dependencies for ThreeTieredExample.",
