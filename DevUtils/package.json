@@ -15,10 +15,13 @@
         "faker": "3.0.1",
         "jshint":  "2.8.0",
         "mocha": "2.3.4",
-		"true": "0.0.2"
+		"true": "0.0.2",
+        "superagent": "1.6.1",
+        "http-status": "0.2.0"
     },
     "scripts": {
-        "lint": "jshint --extract auto --extra-ext .html ../. || node node_modules/true/index.js"
+        "lint": "jshint --extract auto --extra-ext .html ../. || node node_modules/true/index.js",
+        "test": "mocha test.js"
     },
     "version": "1.0.0",
     "readme": "Development dependencies for ThreeTieredExample.",

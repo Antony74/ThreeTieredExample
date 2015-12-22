@@ -13,7 +13,7 @@
     "camelcase" : true,
     "curly"     : true,
     "eqeqeq"    : true,
-    "forin"     : true,
+    "forin"     : false,
     "indent"    : 4,
     "latedef"   : "nofunc",
     "noarg"     : true,
