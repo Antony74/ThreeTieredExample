@@ -55,7 +55,7 @@ describe('Client CRUD tests', function()
                 result = JSON.parse(res.text);
             });
 
-            assert.deepEqual(result,
+            assert.deepEqual(result.data,
             {
                 'Title': 'Dr.',
                 'Firstname': 'Edison',
@@ -91,12 +91,13 @@ describe('Client CRUD tests', function()
 
                 assert.equal(res.status, status.OK);
 
+                var result;
                 assert.doesNotThrow(function()
                 {
                     result = JSON.parse(res.text);
                 });
 
-                assert.deepEqual(result,
+                assert.deepEqual(result.data,
                 {
                     'Title': 'Dr.',
                     'Firstname': 'Freddy',

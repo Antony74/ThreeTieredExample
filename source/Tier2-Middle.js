@@ -33,7 +33,6 @@ function getApi()
         res.json({id: nextClientID});
         ++nextClientID;
         arrIndex = createIndex(db);
-        res.send();
     });
 
     // Read
@@ -44,13 +43,53 @@ function getApi()
         if (client === undefined)
         {
             res.status(status.NOT_FOUND).json({ error: 'Not found' });
-            res.send();
         }
         else
         {
-            res.json(client);
-            res.send();
+            res.json({data: client});
         }
+    });
+
+    api.get('/clients/pages/:pagenum', function(req, res)
+    {
+        var PAGESIZE = 20;
+        var nPageNum = parseInt(req.params.pagenum);
+        var nStart = (nPageNum-1) * 20;
+        var arrItems = [];
+
+        for (var n = 0; n < PAGESIZE; ++n)
+        {
+            var nIndex = nStart + n;
+
+            if (nIndex >=0 && nIndex < arrIndex.length)
+            {
+                arrItems.push(db[arrIndex[nIndex]]);
+            }
+        }
+
+        var arrLinks = [];
+        var PAGES_URL = 'http://localhost:8080/api/v1/clients/pages/';
+
+        arrLinks.push({'rel': 'first', 'href': PAGES_URL + 1});
+
+        if (req.params.pagenum > 1)
+        {
+            arrLinks.push({'rel': 'previous', 'href': PAGES_URL + (nPageNum - 1)});
+        }
+
+        if (PAGESIZE * req.params.pagenum < arrIndex.length)
+        {
+            arrLinks.push({'rel': 'next', 'href': PAGES_URL + (nPageNum + 1)});
+        }
+
+        arrLinks.push({'rel': 'last', 'href': PAGES_URL + Math.floor(arrIndex.length/PAGESIZE)});
+
+        res.json(
+        {
+            'data': arrItems,
+            'links': arrLinks
+        });
+
     });
 
     // Update
@@ -59,7 +98,6 @@ function getApi()
         if (db[req.params.id] === undefined)
         {
             res.status(status.NOT_FOUND).json({ error: 'Not found' });
-            res.send();
         }
         else
         {
@@ -74,7 +112,6 @@ function getApi()
         if (db[req.params.id] === undefined)
         {
             res.status(status.NOT_FOUND).json({ error: 'Not found' });
-            res.send();
         }
         else
         {
@@ -101,13 +138,13 @@ function createIndex(db)
 
     arrIndex.sort(function(clientA, clientB)
     {
-        if (clientA.Surname === clientB.Surname)
+        if (db[clientA].Surname === db[clientB].Surname)
         {
-            return (clientA.FirstName < clientB.FirstName) ? -1 : 1;
+            return (db[clientA].FirstName < db[clientB].FirstName) ? -1 : 1;
         }
         else
         {
-            return (clientA.Surname < clientB.Surname) ? -1 : 1;
+            return (db[clientA].Surname < db[clientB].Surname) ? -1 : 1;
         }
     });
 
