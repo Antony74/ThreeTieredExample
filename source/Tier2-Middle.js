@@ -12,6 +12,11 @@ var app = express();
 
 app.use('/api/v1', getApi());
 
+app.get('/', function(req, res)
+{
+    res.sendFile(__dirname + '/Tier1-UI.html');
+});
+
 var port = 8080;
 var sServerUrl = 'http://localhost:' + port + '/';
 
@@ -68,21 +73,28 @@ function getApi()
         }
 
         var arrLinks = [];
-        var PAGES_URL = 'http://localhost:8080/api/v1/clients/pages/';
 
-        arrLinks.push({'rel': 'first', 'href': PAGES_URL + 1});
+        arrLinks.push({'rel': 'First', 'pageNumber': 1});
 
         if (req.params.pagenum > 1)
         {
-            arrLinks.push({'rel': 'previous', 'href': PAGES_URL + (nPageNum - 1)});
+            arrLinks.push({'rel': 'Previous', 'pageNumber': (nPageNum - 1)});
+        }
+        else
+        {
+            arrLinks.push({'rel': 'Previous'});
         }
 
         if (PAGESIZE * req.params.pagenum < arrIndex.length)
         {
-            arrLinks.push({'rel': 'next', 'href': PAGES_URL + (nPageNum + 1)});
+            arrLinks.push({'rel': 'Next', 'pageNumber': (nPageNum + 1)});
+        }
+        else
+        {
+            arrLinks.push({'rel': 'Next'});
         }
 
-        arrLinks.push({'rel': 'last', 'href': PAGES_URL + Math.floor(arrIndex.length/PAGESIZE)});
+        arrLinks.push({'rel': 'Last', 'pageNumber': Math.floor(arrIndex.length/PAGESIZE)});
 
         res.json(
         {

@@ -1,0 +1,97 @@
+<html ng-app="myApp">
+<head>
+
+    <title>Three tiered example</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-route.js"></script>
+
+    <style>
+        table
+        {
+	        border-collapse:collapse;
+        }
+
+        table, th, td
+        {
+	        border: 1px solid #0077DD;
+	        padding: 5px;
+        }
+
+        th
+        {
+	        color: #FFFFFF;
+	        background-color: #0077DD;
+        }
+
+        tr
+        {
+	        background-color: #D0D0FF;
+        }
+
+        .navigation
+        {
+            padding: 5px;
+        }
+    </style>
+
+    <script>
+
+        var sClientsTemplate = '<div ng-controller="ClientsController">';
+        sClientsTemplate    += '    <table>';
+        sClientsTemplate    += '        <tr>';
+        sClientsTemplate    += '            <th ng-repeat="(name, value) in clients[0]">{{name}}</th>';
+        sClientsTemplate    += '        </tr>';
+        sClientsTemplate    += '        <tr ng-repeat="client in clients">';
+        sClientsTemplate    += '            <td ng-repeat="value in client">{{value}}</td>';
+        sClientsTemplate    += '        </tr>';
+        sClientsTemplate    += '    </table>';
+
+        sClientsTemplate    += '    <span ng-repeat="link in links" class="navigation">';
+        sClientsTemplate    += '        <a href ng-show="link.pageNumber" ng-href="#{{link.pageNumber}}">{{link.rel}}</a>';
+        sClientsTemplate    += '        <span ng-show="!link.pageNumber">{{link.rel}}</span>';
+        sClientsTemplate    += '    </span>';
+        sClientsTemplate    += '</div>';
+
+        var sClientTemplate = '<a ng-controller="ClientController" ng-href="#/">Back to Clients Page</a>';
+
+        /*global angular*/
+        var app = angular.module('myApp', ['ng', 'ngRoute']);
+
+        app.config(function($routeProvider)
+        {
+            $routeProvider.when('/:pageNumber?', {template: sClientsTemplate});
+            $routeProvider.when('/client', {template: sClientTemplate});
+        });
+
+        app.controller('ClientsController', function($scope, $http, $routeParams)
+        {
+            $scope.clients = undefined;
+            $scope.links = undefined;
+
+            $scope.load = function()
+            {
+                var pageNumber = $routeParams.pageNumber ? $routeParams.pageNumber : 1;
+
+                $http.get('/api/v1/Clients/pages/' + pageNumber).success(function(data)
+                {
+                    $scope.clients = data.data;
+                    $scope.links = data.links;
+                });
+            };
+
+            $scope.load();
+        });
+
+        app.controller('ClientController', function(/*$scope, $http*/)
+        {
+        });
+
+    </script>
+</head>
+
+<body>
+    <div ng-view></div>
+</body>
+</html>
+
