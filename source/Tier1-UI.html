@@ -37,6 +37,28 @@
 
     <script>
 
+        /*global window*/
+        if (typeof(window.threeTieredExampleApi) === 'undefined')
+        {
+            window.threeTieredExampleApi =
+            {
+                read: function($http, clientId, callback)
+                {
+                    $http.get('/api/v1/Clients/' + clientId).success(callback);
+                },
+
+                readPage: function($http, pageNumber, callback)
+                {
+                    $http.get('/api/v1/Clients/pages/' + pageNumber).success(callback);
+                },
+
+                update: function($http, clientId, client, callback)
+                {
+                    $http.put('/api/v1/Clients/' + clientId, client).success(callback);
+                },
+            };
+        }
+
         var sClientsTemplate = '<div ng-controller="ClientsController">';
         sClientsTemplate    += '    <table>';
         sClientsTemplate    += '        <tr>';
@@ -121,7 +143,7 @@
 
             var pageNumber = $routeParams.pageNumber ? $routeParams.pageNumber : 1;
 
-            $http.get('/api/v1/Clients/pages/' + pageNumber).success(function(data)
+            window.threeTieredExampleApi.readPage($http, pageNumber, function(data)
             {
                 $scope.clients = data.data;
                 $scope.links = data.links;
@@ -139,7 +161,7 @@
             $scope.clientId = $routeParams.clientId;
             $scope.fromPage = $location.search().fromPage ? $location.search().fromPage : 1;
 
-            $http.get('/api/v1/Clients/' + $routeParams.clientId).success(function(data)
+            window.threeTieredExampleApi.read($http, $routeParams.clientId, function(data)
             {
                 $scope.client = data.data;
             });
@@ -151,7 +173,7 @@
 
             $scope.apply = function(bClose)
             {
-                $http.put('/api/v1/Clients/' + $routeParams.clientId, $scope.client).success(function()
+                window.threeTieredExampleApi.update($http, $routeParams.clientId, $scope.client, function()
                 {
                     if (bClose)
                     {
