@@ -12,15 +12,17 @@ var arrLines = fs.readFileSync(__dirname + '/../source/Tier1-UI.html', {encoding
 arrLines[2] += '<script src="Tier2-Middle.js"></script>\r\n    ';
 fs.writeFile(__dirname + '/../browserified/Tier1-UI.html', arrLines.join('<script'), {encoding: 'utf8'});
 
-// Tier 2 needs browserifying
-/*
+// Tier 2 needs browserifying (actually it doesn't, but a more complicated middle tier certainly would!)
 var browserify = require('browserify');
 var b = browserify();
 b.add(__dirname +'/../source/Tier2-Middle.js');
-b.bundle().pipe(fs.createWriteStream(__dirname + '/../browserified/Tier2-Middle.js'));
-*/
 
-fs.createReadStream(__dirname + '/../source/Tier2-Middle.js').pipe(fs.createWriteStream(__dirname + '/../browserified/Tier2-Middle.js'));
+b.ignore('fs'); // These modules are only used when running in nodejs, so don't browserify them
+b.ignore('body-parser');
+b.ignore('express');
+b.ignore('http-status');
+
+b.bundle().pipe(fs.createWriteStream(__dirname + '/../browserified/Tier2-Middle.js'));
 
 // Tier 3 just needs copying
 
