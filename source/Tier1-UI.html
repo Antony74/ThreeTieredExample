@@ -42,7 +42,7 @@
         sClientsTemplate    += '        <tr>';
         sClientsTemplate    += '            <th ng-repeat="(name, value) in clients[0]">{{name}}</th>';
         sClientsTemplate    += '        </tr>';
-        sClientsTemplate    += '        <tr ng-repeat="client in clients">';
+        sClientsTemplate    += '        <tr ng-dblclick="gotoClient(id)" ng-repeat="(id, client) in clients">';
         sClientsTemplate    += '            <td ng-repeat="value in client">{{value}}</td>';
         sClientsTemplate    += '        </tr>';
         sClientsTemplate    += '    </table>';
@@ -53,18 +53,69 @@
         sClientsTemplate    += '    </span>';
         sClientsTemplate    += '</div>';
 
-        var sClientTemplate = '<a ng-controller="ClientController" ng-href="#/">Back to Clients Page</a>';
+        var sClientTemplate = '<div ng-controller="ClientController">';
+        sClientTemplate    += '     <p><a ng-href="#/">Back to Clients</a></p>';
+        sClientTemplate    += '     <form>';
+        sClientTemplate    += '         <table>';
+        sClientTemplate    += '             <tr>';
+        sClientTemplate    += '                 <td>Title</td>';
+        sClientTemplate    += '                <td><input type="text" id="Clients_Title" class="dialogInput" style="width:95%"/></td>';
+        sClientTemplate    += '                 <td>Firstname</td>';
+        sClientTemplate    += '                 <td><input type="text" id="Clients_Firstname" class="dialogInput" style="width:95%"/></td>';
+        sClientTemplate    += '             </tr>';
+        sClientTemplate    += '             <tr>';
+        sClientTemplate    += '                 <td>Initial</td>';
+        sClientTemplate    += '                 <td><input type="text" id="Clients_Initial" class="dialogInput" style="width:95%"/></td>';
+        sClientTemplate    += '                 <td>Surname</td>';
+        sClientTemplate    += '                 <td><input type="text" id="Clients_Surname" class="dialogInput" style="width:95%"/></td>';
+        sClientTemplate    += '             </tr>';
+        sClientTemplate    += '             <tr>';
+        sClientTemplate    += '                 <td>AddressLine1</td>';
+        sClientTemplate    += '                 <td><input type="text" id="Clients_AddressLine1" class="dialogInput" style="width:95%"/></td>';
+        sClientTemplate    += '                 <td>AddressLine2</td>';
+        sClientTemplate    += '                 <td><input type="text" id="Clients_AddressLine2" class="dialogInput" style="width:95%"/></td>';
+        sClientTemplate    += '             </tr>';
+        sClientTemplate    += '             <tr>';
+        sClientTemplate    += '                 <td>Town</td>';
+        sClientTemplate    += '                 <td><input type="text" id="Clients_Town" class="dialogInput" style="width:95%"/></td>';
+        sClientTemplate    += '                 <td>Postcode</td>';
+        sClientTemplate    += '                 <td><input type="text" id="Clients_Postcode" class="dialogInput" style="width:95%"/></td>';
+        sClientTemplate    += '             </tr>';
+        sClientTemplate    += '             <tr>';
+        sClientTemplate    += '                 <td>HomeNumber</td>';
+        sClientTemplate    += '                 <td><input type="text" id="Clients_HomeNumber" class="dialogInput" style="width:95%"/></td>';
+        sClientTemplate    += '                 <td>EmailAddress</td>';
+        sClientTemplate    += '                 <td><input type="text" id="Clients_EmailAddress" class="dialogInput" style="width:95%"/></td>';
+        sClientTemplate    += '             </tr>';
+        sClientTemplate    += '             <tr>';
+        sClientTemplate    += '                 <td>MobileNumber</td>';
+        sClientTemplate    += '                 <td><input type="text" id="Clients_MobileNumber" class="dialogInput" style="width:95%"/></td>';
+        sClientTemplate    += '                 <td>IsActive</td>';
+        sClientTemplate    += '                 <td><input type="checkbox" style="text-align:left" id="Clients_IsActive" class="dialogInput" style="width:95%"/></td>';
+        sClientTemplate    += '             </tr>';
+        sClientTemplate    += '             <tr>';
+        sClientTemplate    += '                 <td>Notes</td>';
+        sClientTemplate    += '                 <td colspan="3"><input type="text" id="Clients_Notes" class="dialogInput" style="width:98%"/></td>';
+        sClientTemplate    += '             </tr>';
+        sClientTemplate    += '         </table>';
+        sClientTemplate    += '         <p>';
+        sClientTemplate    += '             <input type="button" style="width: 85px; font-weight: bold" value="OK" />';
+        sClientTemplate    += '             <input type="button" style="width: 85px; font-weight: bold" value="Apply" />';
+        sClientTemplate    += '             <input type="button" style="width: 85px; font-weight: bold" value="Cancel" />';
+        sClientTemplate    += '         </p>';
+        sClientTemplate    += '     </form>';
+        sClientTemplate    += '</div>';
 
         /*global angular*/
         var app = angular.module('myApp', ['ng', 'ngRoute']);
 
         app.config(function($routeProvider)
         {
+            $routeProvider.when('/client/:clientId', {template: sClientTemplate});
             $routeProvider.when('/:pageNumber?', {template: sClientsTemplate});
-            $routeProvider.when('/client', {template: sClientTemplate});
         });
 
-        app.controller('ClientsController', function($scope, $http, $routeParams)
+        app.controller('ClientsController', function($scope, $http, $routeParams, $location)
         {
             $scope.clients = undefined;
             $scope.links = undefined;
@@ -78,6 +129,11 @@
                     $scope.clients = data.data;
                     $scope.links = data.links;
                 });
+            };
+
+            $scope.gotoClient = function(clientId)
+            {
+                $location.path('/client/' + clientId);
             };
 
             $scope.load();
