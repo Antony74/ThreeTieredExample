@@ -68,33 +68,34 @@ function getApi()
 
             if (nIndex >=0 && nIndex < arrIndex.length)
             {
-                arrItems.push(db[arrIndex[nIndex]]);
+                var client = {clientId: arrIndex[nIndex], fields: db[arrIndex[nIndex]]};
+                arrItems.push(client);
             }
         }
 
         var arrLinks = [];
 
-        arrLinks.push({'rel': 'First', 'pageNumber': 1});
-
         if (req.params.pagenum > 1)
         {
+            arrLinks.push({'rel': 'First', 'pageNumber': 1});
             arrLinks.push({'rel': 'Previous', 'pageNumber': (nPageNum - 1)});
         }
         else
         {
+            arrLinks.push({'rel': 'First'});
             arrLinks.push({'rel': 'Previous'});
         }
 
         if (PAGESIZE * req.params.pagenum < arrIndex.length)
         {
             arrLinks.push({'rel': 'Next', 'pageNumber': (nPageNum + 1)});
+            arrLinks.push({'rel': 'Last', 'pageNumber': Math.floor(arrIndex.length/PAGESIZE)});
         }
         else
         {
             arrLinks.push({'rel': 'Next'});
+            arrLinks.push({'rel': 'Last'});
         }
-
-        arrLinks.push({'rel': 'Last', 'pageNumber': Math.floor(arrIndex.length/PAGESIZE)});
 
         res.json(
         {
