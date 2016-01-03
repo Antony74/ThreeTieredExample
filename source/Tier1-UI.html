@@ -33,6 +33,21 @@
         {
             padding: 5px;
         }
+
+        .button, .buttonDelete
+        {
+            width: 85px;
+            font-weight: bold;
+        }
+
+        .buttonDelete
+        {
+            position: fixed;
+            left:510px;
+            border-color:red;
+            background-color:pink;
+        }
+
     </style>
 
     <script>
@@ -69,6 +84,11 @@
                 {
                     $http.put('/api/v1/Clients/' + clientId, client).success(callback);
                 },
+
+                delete: function($http, clientId, callback)
+                {
+                    $http.delete('/api/v1/Clients/' + clientId).success(callback);
+                },
             };
 
             firstTime = function() {};
@@ -93,7 +113,7 @@
 
         var sClientTemplate = '<div ng-controller="ClientController">';
         sClientTemplate    += '     <form>';
-        sClientTemplate    += '         <table>';
+        sClientTemplate    += '         <table style="width: 585px">';
         sClientTemplate    += '             <tr>';
         sClientTemplate    += '                 <td>Title</td>';
         sClientTemplate    += '                <td><input type="text" style="width:95%" ng-model="client.Title" /></td>';
@@ -136,9 +156,10 @@
         sClientTemplate    += '             </tr>';
         sClientTemplate    += '         </table>';
         sClientTemplate    += '         <p>';
-        sClientTemplate    += '             <input type="button" style="width: 85px; font-weight: bold" value="OK" ng-click="apply(true)" />';
-        sClientTemplate    += '             <input type="button" style="width: 85px; font-weight: bold" value="Apply" ng-click="apply(false)" />';
-        sClientTemplate    += '             <input type="button" style="width: 85px; font-weight: bold" value="Cancel" ng-click="cancel()" />';
+        sClientTemplate    += '             <input type="button" class="button" value="OK" ng-click="apply(true)" />';
+        sClientTemplate    += '             <input type="button" class="button" value="Apply" ng-click="apply(false)" />';
+        sClientTemplate    += '             <input type="button" class="button" value="Cancel" ng-click="close()" />';
+        sClientTemplate    += '             <input type="button" class="buttonDelete" value="Delete" ng-click="delete()" />';
         sClientTemplate    += '         </p>';
         sClientTemplate    += '     </form>';
         sClientTemplate    += '</div>';
@@ -185,7 +206,7 @@
                 firstTime();
             });
 
-            $scope.cancel = function()
+            $scope.close = function()
             {
                 $location.path('/' + $scope.fromPage);
             };
@@ -196,8 +217,16 @@
                 {
                     if (bClose)
                     {
-                        $scope.cancel();
+                        $scope.close();
                     }
+                });
+            };
+
+            $scope.delete = function()
+            {
+                api.delete($http, $routeParams.clientId, function()
+                {
+                    $scope.close();
                 });
             };
 
