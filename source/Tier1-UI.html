@@ -213,6 +213,7 @@
 
             if (typeof($routeParams.clientId) === 'undefined')
             {
+                // Blank client record (create operation, if applied)
                 $scope.client =
                 {
                     'Title': '',
@@ -232,6 +233,7 @@
             }
             else
             {
+                // Read existing client record (update operation, if applied)
                 api.read($http, $routeParams.clientId, function(data)
                 {
                     $scope.client = data.data;
@@ -249,6 +251,7 @@
             {
                 if (typeof($scope.clientId) === 'undefined')
                 {
+                    // Create new client record
                     api.create($http, $scope.client, function(data)
                     {
                         $scope.clientId = data.id;
@@ -263,6 +266,7 @@
                 }
                 else
                 {
+                    // Update existing client record
                     api.update($http, $scope.clientId, $scope.client, function()
                     {
                         if (bClose)
@@ -279,10 +283,12 @@
             {
                 if (typeof($scope.clientId) === 'undefined')
                 {
+                    // Abandon new/never created client record
                     $scope.close();
                 }
                 else
                 {
+                    // Delete existing client record
                     api.delete($http, $scope.clientId, function()
                     {
                         $scope.close();
