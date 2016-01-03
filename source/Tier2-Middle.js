@@ -8,26 +8,20 @@ var nextClientID = 1;
 //
 var databaseReady = function(callback)
 {
-    /*global window, angular*/
-    if (typeof(window) !== 'undefined')
+    var url = 'Tier3-DB.json';
+
+    /*global XMLHttpRequest:true*/
+    if (typeof(XMLHttpRequest) === 'undefined')
     {
-        // We're running within the browser so use http to load the 'database'
-        angular.injector(['ng']).invoke(function($http)
-        {
-            $http.get('Tier3-DB.json').success(gotDatabase);
-        });
-    }
-    else
-    {
-        // We're running within nodejs so use fs to load the 'database'
-        var fs = require('fs');
-        gotDatabase(JSON.parse(fs.readFileSync(__dirname + '/Tier3-DB.json')));
+        XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+        url = 'file://' + __dirname + '/Tier3-DB.json';
     }
 
-    // Once we've got the database, finish readying it
-    function gotDatabase(loadedDatabase)
+    var oReq = new XMLHttpRequest();
+    oReq.addEventListener('load', function()
     {
-        db = loadedDatabase;
+        db = JSON.parse(this.responseText);
+
         arrIndex = createIndex(db);
         nextClientID = arrIndex.length + 1;
 
@@ -37,9 +31,11 @@ var databaseReady = function(callback)
             callback();
         };
 
-
         callback();
-    }
+    });
+
+    oReq.open('GET', url);
+    oReq.send();
 };
 
 //
@@ -152,6 +148,7 @@ var jsApi =
     },
 };
 
+/*global window*/
 if (typeof(window) !== 'undefined')
 {
     // We're running in the browser so expose the JavaScript API
@@ -160,6 +157,9 @@ if (typeof(window) !== 'undefined')
 else
 {
     // We're running within nodejs so expose the http API
+
+    exports.serverStarted = function() {};
+
     databaseReady(function()
     {
         var express = require('express');
@@ -178,6 +178,7 @@ else
 
         app.listen(port);
         console.log('Server has been started (' + sServerUrl + ')');
+        exports.serverStarted();
     });
 }
 

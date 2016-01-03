@@ -4,7 +4,11 @@ var assert = require('assert');
 var superagent = require('superagent');
 var status = require('http-status');
 
-require('../source/Tier2-Middle.js');
+before(function(done)
+{
+    var server = require('../source/Tier2-Middle.js');
+    server.serverStarted = done;
+});
 
 describe('Client CRUD tests', function()
 {

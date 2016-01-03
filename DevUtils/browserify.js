@@ -17,7 +17,7 @@ var browserify = require('browserify');
 var b = browserify();
 b.add(__dirname +'/../source/Tier2-Middle.js');
 
-b.ignore('fs'); // These modules are only used when running in nodejs, so don't browserify them
+b.ignore('XMLHttpRequest'); // These modules are only used when running in nodejs, so don't browserify them
 b.ignore('body-parser');
 b.ignore('express');
 b.ignore('http-status');
