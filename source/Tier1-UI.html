@@ -37,6 +37,17 @@
 
     <script>
 
+        var firstTime = function()
+        {
+            /*global alert*/
+            alert('Welcome to the in-browser demo of this three tiered example');
+            firstTime = function() {};
+
+            // In this mode the controllers often don't sync properly first time in.  The
+            // alert is a workaround which prods them into action, and I did want to make
+            // this kind of clear distinction between modes anyway.
+        };
+
         /*global window*/
         var api = window.threeTieredExampleApi;
 
@@ -59,6 +70,8 @@
                     $http.put('/api/v1/Clients/' + clientId, client).success(callback);
                 },
             };
+
+            firstTime = function() {};
         }
 
         var sClientsTemplate = '<div ng-controller="ClientsController">';
@@ -149,6 +162,8 @@
             {
                 $scope.clients = data.data;
                 $scope.links = data.links;
+
+                firstTime();
             });
 
             $scope.gotoClient = function(clientId)
@@ -166,6 +181,7 @@
             api.read($http, $routeParams.clientId, function(data)
             {
                 $scope.client = data.data;
+                firstTime();
             });
 
             $scope.cancel = function()
