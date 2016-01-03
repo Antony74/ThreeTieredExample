@@ -204,8 +204,17 @@ function getHttpApi(api)
     });
 
     // Read
+    function setNoCacheHeaders(res)
+    {
+        res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.header('Pragma:', 'no-cache');
+        res.header('Expires:', '0');
+    }
+
     httpApi.get('/clients/:id', function(req, res)
     {
+        setNoCacheHeaders(res);
+
         api.read(null, req.params.id, function(data)
         {
             if (data.data === undefined)
@@ -221,6 +230,8 @@ function getHttpApi(api)
 
     httpApi.get('/clients/pages/:pagenum', function(req, res)
     {
+        setNoCacheHeaders(res);
+
         api.readPage(null, req.params.pagenum, function(data)
         {
             res.json(data);
