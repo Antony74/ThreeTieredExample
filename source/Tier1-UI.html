@@ -70,6 +70,11 @@
         {
             api =
             {
+                create: function($http, client, callback)
+                {
+                    $http.post('/api/v1/Clients/', client).success(callback);
+                },
+
                 read: function($http, clientId, callback)
                 {
                     $http.get('/api/v1/Clients/' + clientId).success(callback);
@@ -105,6 +110,7 @@
         sClientsTemplate    += '        </tr>';
         sClientsTemplate    += '    </table>';
 
+        sClientsTemplate    += '    <input type="button" style="margin:5px" value="Create new" ng-click="createNew()" />';
         sClientsTemplate    += '    <span ng-repeat="link in links" class="navigation">';
         sClientsTemplate    += '        <a href ng-show="link.pageNumber" ng-href="#{{link.pageNumber}}">{{link.rel}}</a>';
         sClientsTemplate    += '        <span ng-show="!link.pageNumber">{{link.rel}}</span>';
@@ -169,7 +175,7 @@
 
         app.config(function($routeProvider)
         {
-            $routeProvider.when('/client/:clientId', {template: sClientTemplate});
+            $routeProvider.when('/client/:clientId?', {template: sClientTemplate});
             $routeProvider.when('/:pageNumber?', {template: sClientsTemplate});
         });
 
@@ -192,6 +198,11 @@
             {
                 $location.path('/client/' + clientId).search({fromPage: pageNumber});
             };
+
+            $scope.createNew = function()
+            {
+                $location.path('/client/').search({fromPage: pageNumber});
+            };
         });
 
         app.controller('ClientController', function($scope, $http, $routeParams, $location)
@@ -200,11 +211,34 @@
             $scope.clientId = $routeParams.clientId;
             $scope.fromPage = $location.search().fromPage ? $location.search().fromPage : 1;
 
-            api.read($http, $routeParams.clientId, function(data)
+            if (typeof($routeParams.clientId) === 'undefined')
             {
-                $scope.client = data.data;
-                firstTime();
-            });
+                $scope.client =
+                {
+                    'Title': '',
+                    'Firstname': '',
+                    'Initial': '',
+                    'Surname': '',
+                    'AddressLine1': '',
+                    'AddressLine2': '',
+                    'Town': '',
+                    'Postcode': '',
+                    'HomeNumber': '',
+                    'MobileNumber': '',
+                    'EmailAddress': '',
+                    'Notes': '',
+                    'IsActive': true
+                };
+            }
+            else
+            {
+                api.read($http, $routeParams.clientId, function(data)
+                {
+                    $scope.client = data.data;
+
+                    firstTime();
+                });
+            }
 
             $scope.close = function()
             {
@@ -213,21 +247,48 @@
 
             $scope.apply = function(bClose)
             {
-                api.update($http, $routeParams.clientId, $scope.client, function()
+                if (typeof($scope.clientId) === 'undefined')
                 {
-                    if (bClose)
+                    api.create($http, $scope.client, function(data)
                     {
-                        $scope.close();
-                    }
-                });
+                        $scope.clientId = data.id;
+
+                        if (bClose)
+                        {
+                            $scope.close();
+                        }
+
+                        firstTime();
+                    });
+                }
+                else
+                {
+                    api.update($http, $scope.clientId, $scope.client, function()
+                    {
+                        if (bClose)
+                        {
+                            $scope.close();
+                        }
+
+                        firstTime();
+                    });
+                }
             };
 
             $scope.delete = function()
             {
-                api.delete($http, $routeParams.clientId, function()
+                if (typeof($scope.clientId) === 'undefined')
                 {
                     $scope.close();
-                });
+                }
+                else
+                {
+                    api.delete($http, $scope.clientId, function()
+                    {
+                        $scope.close();
+                        firstTime();
+                    });
+                }
             };
 
         });

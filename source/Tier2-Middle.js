@@ -122,10 +122,19 @@ var jsApi =
     // Update
     update: function($http, clientId, client, callback)
     {
+        clientId = parseInt(clientId);
+
         databaseReady(function()
         {
-            db[clientId] = client;
-            callback();
+            if (db[clientId] === undefined)
+            {
+                callback(false);
+            }
+            else
+            {
+                db[clientId] = client;
+                callback(true);
+            }
         });
     },
 
@@ -185,7 +194,7 @@ else
 //
 // getHttpApi
 //
-function getHttpApi(api)
+function getHttpApi(jsApi)
 {
     var bodyparser = require('body-parser');
     var express = require('express');
@@ -197,7 +206,7 @@ function getHttpApi(api)
     // Create
     httpApi.post('/clients', function(req, res)
     {
-        api.create(null, req.body, function(data)
+        jsApi.create(null, req.body, function(data)
         {
             res.json(data);
         });
@@ -215,7 +224,7 @@ function getHttpApi(api)
     {
         setNoCacheHeaders(res);
 
-        api.read(null, req.params.id, function(data)
+        jsApi.read(null, req.params.id, function(data)
         {
             if (data.data === undefined)
             {
@@ -232,7 +241,7 @@ function getHttpApi(api)
     {
         setNoCacheHeaders(res);
 
-        api.readPage(null, req.params.pagenum, function(data)
+        jsApi.readPage(null, req.params.pagenum, function(data)
         {
             res.json(data);
         });
@@ -241,21 +250,23 @@ function getHttpApi(api)
     // Update
     httpApi.put('/clients/:id', function(req, res)
     {
-        if (db[req.params.id] === undefined)
+        jsApi.update(null, req.params.id, req.body, function(bOK)
         {
-            res.status(status.NOT_FOUND).json({ error: 'Not found' });
-        }
-        else
-        {
-            db[req.params.id] = req.body;
-            res.send();
-        }
+            if (bOK)
+            {
+                res.send();
+            }
+            else
+            {
+                res.status(status.NOT_FOUND).json({ error: 'Not found' });
+            }
+        });
     });
 
     // Delete
     httpApi.delete('/clients/:id', function(req, res)
     {
-        api.delete(null, req.params.id, function(bDone)
+        jsApi.delete(null, req.params.id, function(bDone)
         {
             if (bDone)
             { 
@@ -285,13 +296,18 @@ function createIndex(db)
 
     arrIndex.sort(function(clientA, clientB)
     {
-        if (db[clientA].Surname === db[clientB].Surname)
+        var surnameA = db[clientA].Surname.toString().toLowerCase();
+        var surnameB = db[clientB].Surname.toString().toLowerCase();
+
+        if (surnameA === surnameB)
         {
-            return (db[clientA].FirstName < db[clientB].FirstName) ? -1 : 1;
+            var firstnameA = db[clientA].Firstname.toString().toLowerCase();
+            var firstnameB = db[clientB].Firstname.toString().toLowerCase();
+            return (firstnameA < firstnameB) ? -1 : 1;
         }
         else
         {
-            return (db[clientA].Surname < db[clientB].Surname) ? -1 : 1;
+            return (surnameA < surnameB) ? -1 : 1;
         }
     });
 
