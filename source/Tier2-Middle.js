@@ -1,75 +1,78 @@
 
 var db = {};
-
-var callbackQueue = [];
-
-/*global window*/
-if (typeof(window) !== 'undefined')
-{
-    window.threeTieredExampleApi =
-    {
-        read: function($http, clientId, callback)
-        {
-            callbackQueue.push(['read', [$http, clientId, callback]]);
-        },
-
-        readPage: function($http, pageNumber, callback)
-        {
-            callbackQueue.push(['readPage', [$http, pageNumber, callback]]);
-        },
-
-        update: function($http, clientId, client, callback)
-        {
-            callbackQueue.push(['update', [$http, clientId, client, callback]]);
-        },
-
-        delete: function($http, clientId, callback)
-        {
-            callbackQueue.push(['delete', [$http, clientId, callback]]);
-        }
-    };
-
-    /*global angular*/
-    angular.injector(['ng']).invoke(function($http)
-    {
-        $http.get('Tier3-DB.json').success(exposeDatabase);
-    });
-}
-else
-{
-    var fs = require('fs');
-    var db = JSON.parse(fs.readFileSync(__dirname + '/Tier3-DB.json'));
-    exposeDatabase(db);
-}
+var arrIndex = [];
+var nextClientID = 1;
 
 //
-// exposeDatabase
+// databaseReady
 //
-function exposeDatabase(db)
+var databaseReady = function(callback)
 {
-    var arrIndex = createIndex(db);
-    var nextClientID = arrIndex.length + 1;
-
-    var api =
+    /*global window, angular*/
+    if (typeof(window) !== 'undefined')
     {
-        // Create
-        create: function($http, client, callback)
+        // We're running within the browser so use http to load the 'database'
+        angular.injector(['ng']).invoke(function($http)
+        {
+            $http.get('Tier3-DB.json').success(gotDatabase);
+        });
+    }
+    else
+    {
+        // We're running within nodejs so use fs to load the 'database'
+        var fs = require('fs');
+        gotDatabase(JSON.parse(fs.readFileSync(__dirname + '/Tier3-DB.json')));
+    }
+
+    // Once we've got the database, finish readying it
+    function gotDatabase(loadedDatabase)
+    {
+        db = loadedDatabase;
+        arrIndex = createIndex(db);
+        nextClientID = arrIndex.length + 1;
+
+        // Closure.  Once the database is ready it stays ready.
+        databaseReady = function(callback)
+        {
+            callback();
+        };
+
+
+        callback();
+    }
+};
+
+//
+// jsApi
+//
+var jsApi =
+{
+    // Create
+    create: function($http, client, callback)
+    {
+        databaseReady(function()
         {
             db[nextClientID.toString()] = client;
             var retval = {id: nextClientID};
             ++nextClientID;
             arrIndex = createIndex(db);
             callback(retval);
-        },
+        });
+    },
 
-        // Read
-        read: function($http, clientId, callback)
+    // Read
+    read: function($http, clientId, callback)
+    {
+        databaseReady(function()
         {
             var client = db[clientId];
             callback({data: client});
-        },
+        });
+    },
 
-        readPage: function($http, nPageNum, callback)
+    readPage: function($http, nPageNum, callback)
+    {
+        databaseReady(function()
         {
             nPageNum = parseInt(nPageNum);
 
@@ -117,17 +120,23 @@ function exposeDatabase(db)
                 'data': arrItems,
                 'links': arrLinks
             });
-        },
+        });
+    },
 
-        // Update
-        update: function($http, clientId, client, callback)
+    // Update
+    update: function($http, clientId, client, callback)
+    {
+        databaseReady(function()
         {
             db[clientId] = client;
             callback();
-        },
+        });
+    },
 
-        // Delete
-        delete: function($http, clientId, callback)
+    // Delete
+    delete: function($http, clientId, callback)
+    {
+        databaseReady(function()
         {
             if (db[clientId] === undefined)
             {
@@ -139,29 +148,25 @@ function exposeDatabase(db)
                 arrIndex = createIndex(db);
                 callback(true);
             }
-        },
-    };
+        });
+    },
+};
 
-    if (typeof(window) !== 'undefined')
+if (typeof(window) !== 'undefined')
+{
+    // We're running in the browser so expose the JavaScript API
+    window.threeTieredExampleApi = jsApi;
+}
+else
+{
+    // We're running within nodejs so expose the http API
+    databaseReady(function()
     {
-        // We are in the browser so expose the JavaScript API
-        window.threeTieredExampleApi = api;
-
-        // Also make any API calls which have been queued
-        while (callbackQueue.length)
-        {
-            var queuedItem = callbackQueue.shift();
-            api[queuedItem[0]].apply(api, queuedItem[1]);
-        }
-    }
-    else
-    {
-        // We are not in the browser so expose the http API
         var express = require('express');
 
         var app = express();
 
-        app.use('/api/v1', getHttpApi(api));
+        app.use('/api/v1', getHttpApi(jsApi));
 
         app.get('/', function(req, res)
         {
@@ -173,7 +178,7 @@ function exposeDatabase(db)
 
         app.listen(port);
         console.log('Server has been started (' + sServerUrl + ')');
-    }
+    });
 }
 
 //

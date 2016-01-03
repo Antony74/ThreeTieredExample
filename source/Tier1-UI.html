@@ -38,9 +38,11 @@
     <script>
 
         /*global window*/
-        if (typeof(window.threeTieredExampleApi) === 'undefined')
+        var api = window.threeTieredExampleApi;
+
+        if (typeof(api) === 'undefined')
         {
-            window.threeTieredExampleApi =
+            api =
             {
                 read: function($http, clientId, callback)
                 {
@@ -143,7 +145,7 @@
 
             var pageNumber = $routeParams.pageNumber ? $routeParams.pageNumber : 1;
 
-            window.threeTieredExampleApi.readPage($http, pageNumber, function(data)
+            api.readPage($http, pageNumber, function(data)
             {
                 $scope.clients = data.data;
                 $scope.links = data.links;
@@ -161,7 +163,7 @@
             $scope.clientId = $routeParams.clientId;
             $scope.fromPage = $location.search().fromPage ? $location.search().fromPage : 1;
 
-            window.threeTieredExampleApi.read($http, $routeParams.clientId, function(data)
+            api.read($http, $routeParams.clientId, function(data)
             {
                 $scope.client = data.data;
             });
@@ -173,7 +175,7 @@
 
             $scope.apply = function(bClose)
             {
-                window.threeTieredExampleApi.update($http, $routeParams.clientId, $scope.client, function()
+                api.update($http, $routeParams.clientId, $scope.client, function()
                 {
                     if (bClose)
                     {
