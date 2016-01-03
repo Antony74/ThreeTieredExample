@@ -80,9 +80,9 @@
                     $http.get('/api/v1/Clients/' + clientId).success(callback);
                 },
 
-                readPage: function($http, pageNumber, callback)
+                readPage: function($http, pageNumber, sFilter, callback)
                 {
-                    $http.get('/api/v1/Clients/pages/' + pageNumber).success(callback);
+                    $http.get('/api/v1/Clients/pages/' + pageNumber + '/' + sFilter).success(callback);
                 },
 
                 update: function($http, clientId, client, callback)
@@ -99,8 +99,13 @@
             firstTime = function() {};
         }
 
-        var sClientsTemplate = '<br><br><br><br>';
+        var sClientsTemplate = '<br><br>';
         sClientsTemplate    += '<div ng-controller="ClientsController">';
+
+        sClientsTemplate    += '    <div style="margin:5px">';
+        sClientsTemplate    += '        <span>Filter&nbsp;</span><input type="text" id="filter" ng-model="filter" ng-change="filterChanged()"/><input type="button" value="X" ng-click="filterCleared()"/>';
+        sClientsTemplate    += '    </div>';
+
         sClientsTemplate    += '    <table>';
         sClientsTemplate    += '        <tr>';
         sClientsTemplate    += '            <th ng-repeat="(name, value) in clients[0].fields">{{name}}</th>';
@@ -112,7 +117,7 @@
 
         sClientsTemplate    += '    <input type="button" style="margin:5px" value="Create new" ng-click="createNew()" />';
         sClientsTemplate    += '    <span ng-repeat="link in links" class="navigation">';
-        sClientsTemplate    += '        <a href ng-show="link.pageNumber" ng-href="#{{link.pageNumber}}">{{link.rel}}</a>';
+        sClientsTemplate    += '        <a href ng-show="link.pageNumber" ng-href="#{{link.pageNumber}}/{{filter}}">{{link.rel}}</a>';
         sClientsTemplate    += '        <span ng-show="!link.pageNumber">{{link.rel}}</span>';
         sClientsTemplate    += '    </span>';
         sClientsTemplate    += '</div>';
@@ -176,17 +181,19 @@
         app.config(function($routeProvider)
         {
             $routeProvider.when('/client/:clientId?', {template: sClientTemplate});
-            $routeProvider.when('/:pageNumber?', {template: sClientsTemplate});
+            $routeProvider.when('/:pageNumber?/:filter?', {template: sClientsTemplate});
         });
 
         app.controller('ClientsController', function($scope, $http, $routeParams, $location)
         {
             $scope.clients = undefined;
             $scope.links = undefined;
+            $scope.filter = $routeParams.filter ? $routeParams.filter : '';
+            window.document.getElementById('filter').focus();
 
             var pageNumber = $routeParams.pageNumber ? $routeParams.pageNumber : 1;
 
-            api.readPage($http, pageNumber, function(data)
+            api.readPage($http, pageNumber, $scope.filter, function(data)
             {
                 $scope.clients = data.data;
                 $scope.links = data.links;
@@ -196,12 +203,23 @@
 
             $scope.gotoClient = function(clientId)
             {
-                $location.path('/client/' + clientId).search({fromPage: pageNumber});
+                $location.path('/client/' + clientId).search({fromPage: pageNumber, filter: $scope.filter});
             };
 
             $scope.createNew = function()
             {
-                $location.path('/client/').search({fromPage: pageNumber});
+                $location.path('/client/').search({fromPage: pageNumber, filter: $scope.filter});
+            };
+
+            $scope.filterChanged = function()
+            {
+                $location.path('/' + 1 + '/' + $scope.filter);
+            };
+
+            $scope.filterCleared = function()
+            {
+                $scope.filter = '';
+                $scope.filterChanged();
             };
         });
 
@@ -244,7 +262,7 @@
 
             $scope.close = function()
             {
-                $location.path('/' + $scope.fromPage);
+                $location.path('/' + $scope.fromPage + '/' + $scope.filter);
             };
 
             $scope.apply = function(bClose)

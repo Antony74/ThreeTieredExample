@@ -66,24 +66,50 @@ var jsApi =
         });
     },
 
-    readPage: function($http, nPageNum, callback)
+    readPage: function($http, nPageNum, sFilter, callback)
     {
         databaseReady(function()
         {
             nPageNum = parseInt(nPageNum);
+            sFilter = sFilter.toString().toLowerCase();
 
             var PAGESIZE = 20;
-            var nStart = (nPageNum-1) * 20;
+            var nFirst = (nPageNum-1) * PAGESIZE;
+            var nLast  = nFirst + PAGESIZE - 1;
+            var nCurrentItem = 0;
+            var bMore = false;
+
             var arrItems = [];
 
-            for (var n = 0; n < PAGESIZE; ++n)
+            for (var nIndex = 0; nIndex < arrIndex.length; ++nIndex)
             {
-                var nIndex = nStart + n;
+                var client = db[arrIndex[nIndex]];
+                var bFound = false;
 
-                if (nIndex >=0 && nIndex < arrIndex.length)
+                for (var fieldname in client)
                 {
-                    var client = {clientId: arrIndex[nIndex], fields: db[arrIndex[nIndex]]};
-                    arrItems.push(client);
+                    if (client[fieldname].toString().toLowerCase().indexOf(sFilter) !== -1)
+                    {
+                        bFound = true;
+                        break;
+                    }
+                }
+
+                if (bFound)
+                {
+                    ++nCurrentItem;
+
+                    if (nCurrentItem >= nFirst)
+                    {
+                        if (nCurrentItem > nLast)
+                        {
+                            bMore = true;
+                            break;
+                        }
+
+                        var oClient = {clientId: arrIndex[nIndex], fields: client};
+                        arrItems.push(oClient);
+                    }
                 }
             }
 
@@ -100,7 +126,7 @@ var jsApi =
                 arrLinks.push({'rel': 'Previous'});
             }
 
-            if (PAGESIZE * nPageNum < arrIndex.length)
+            if (bMore)
             {
                 arrLinks.push({'rel': 'Next', 'pageNumber': (nPageNum + 1)});
                 arrLinks.push({'rel': 'Last', 'pageNumber': Math.floor(arrIndex.length/PAGESIZE)});
@@ -237,11 +263,13 @@ function getHttpApi(jsApi)
         });
     });
 
-    httpApi.get('/clients/pages/:pagenum', function(req, res)
+    httpApi.get('/clients/pages/:pagenum/:filter?', function(req, res)
     {
         setNoCacheHeaders(res);
 
-        jsApi.readPage(null, req.params.pagenum, function(data)
+        var sFilter = req.params.filter ? req.params.filter : '';
+
+        jsApi.readPage(null, req.params.pagenum, sFilter, function(data)
         {
             res.json(data);
         });
