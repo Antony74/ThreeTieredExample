@@ -14,7 +14,8 @@
     "dependencies": {
         "express": "4.13.1",
         "http-status": "0.2.0",
-        "body-parser": "1.14.2"
+        "body-parser": "1.14.2",
+        "xmlhttprequest": "1.8.0"
     },
     "scripts": {
         "lint": "cd ../devutils && npm run lint --silent && cd ../source",
