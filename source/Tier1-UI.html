@@ -100,77 +100,77 @@
         }
 
         var sClientsTemplate = '<br><br>';
-        sClientsTemplate    += '<div ng-controller="ClientsController">';
+        sClientsTemplate    += '<div ng-controller="ClientsController as ctrl">';
 
         sClientsTemplate    += '    <div style="margin:5px">';
-        sClientsTemplate    += '        <span>Filter&nbsp;</span><input type="text" id="filter" ng-model="filter" ng-change="filterChanged()"/><input type="button" value="X" ng-click="filterCleared()"/>';
+        sClientsTemplate    += '        <span>Filter&nbsp;</span><input type="text" id="filter" ng-model="ctrl.filter" ng-change="ctrl.filterChanged()"/><input type="button" value="X" ng-click="ctrl.filterCleared()"/>';
         sClientsTemplate    += '    </div>';
 
         sClientsTemplate    += '    <table>';
         sClientsTemplate    += '        <tr>';
-        sClientsTemplate    += '            <th ng-repeat="(name, value) in clients[0].fields">{{name}}</th>';
+        sClientsTemplate    += '            <th ng-repeat="(name, value) in ctrl.clients[0].fields">{{name}}</th>';
         sClientsTemplate    += '        </tr>';
-        sClientsTemplate    += '        <tr ng-dblclick="gotoClient(client.clientId)" ng-repeat="client in clients">';
+        sClientsTemplate    += '        <tr ng-dblclick="ctrl.gotoClient(client.clientId)" ng-repeat="client in ctrl.clients">';
         sClientsTemplate    += '            <td ng-repeat="value in client.fields">{{value}}</td>';
         sClientsTemplate    += '        </tr>';
         sClientsTemplate    += '    </table>';
 
-        sClientsTemplate    += '    <input type="button" style="margin:5px" value="Create new" ng-click="createNew()" />';
-        sClientsTemplate    += '    <span ng-repeat="link in links" class="navigation">';
-        sClientsTemplate    += '        <a href ng-show="link.pageNumber" ng-href="#{{link.pageNumber}}/{{filter}}">{{link.rel}}</a>';
+        sClientsTemplate    += '    <input type="button" style="margin:5px" value="Create new" ng-click="ctrl.createNew()" />';
+        sClientsTemplate    += '    <span ng-repeat="link in ctrl.links" class="navigation">';
+        sClientsTemplate    += '        <a href ng-show="link.pageNumber" ng-href="#{{link.pageNumber}}/{{ctrl.filter}}">{{link.rel}}</a>';
         sClientsTemplate    += '        <span ng-show="!link.pageNumber">{{link.rel}}</span>';
         sClientsTemplate    += '    </span>';
         sClientsTemplate    += '</div>';
 
-        var sClientTemplate = '<div ng-controller="ClientController">';
+        var sClientTemplate = '<div ng-controller="ClientController as ctrl">';
         sClientTemplate    += '     <form>';
         sClientTemplate    += '         <table style="width: 585px">';
         sClientTemplate    += '             <tr>';
         sClientTemplate    += '                 <td>Title</td>';
-        sClientTemplate    += '                <td><input type="text" style="width:95%" ng-model="client.Title" /></td>';
+        sClientTemplate    += '                <td><input type="text" style="width:95%" ng-model="ctrl.client.Title" /></td>';
         sClientTemplate    += '                 <td>Firstname</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="client.Firstname" /></td>';
+        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.Firstname" /></td>';
         sClientTemplate    += '             </tr>';
         sClientTemplate    += '             <tr>';
         sClientTemplate    += '                 <td>Initial</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="client.Initial" /></td>';
+        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.Initial" /></td>';
         sClientTemplate    += '                 <td>Surname</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="client.Surname" /></td>';
+        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.Surname" /></td>';
         sClientTemplate    += '             </tr>';
         sClientTemplate    += '             <tr>';
         sClientTemplate    += '                 <td>AddressLine1</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="client.AddressLine1" /></td>';
+        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.AddressLine1" /></td>';
         sClientTemplate    += '                 <td>AddressLine2</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="client.AddressLine2" /></td>';
+        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.AddressLine2" /></td>';
         sClientTemplate    += '             </tr>';
         sClientTemplate    += '             <tr>';
         sClientTemplate    += '                 <td>Town</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="client.Town" /></td>';
+        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.Town" /></td>';
         sClientTemplate    += '                 <td>Postcode</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="client.Postcode" /></td>';
+        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.Postcode" /></td>';
         sClientTemplate    += '             </tr>';
         sClientTemplate    += '             <tr>';
         sClientTemplate    += '                 <td>HomeNumber</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="client.HomeNumber" /></td>';
+        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.HomeNumber" /></td>';
         sClientTemplate    += '                 <td>EmailAddress</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="client.EmailAddress" /></td>';
+        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.EmailAddress" /></td>';
         sClientTemplate    += '             </tr>';
         sClientTemplate    += '             <tr>';
         sClientTemplate    += '                 <td>MobileNumber</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="client.MobileNumber" /></td>';
+        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.MobileNumber" /></td>';
         sClientTemplate    += '                 <td>IsActive</td>';
-        sClientTemplate    += '                 <td><input type="checkbox" style="width:95%" ng-model="client.IsActive" /></td>';
+        sClientTemplate    += '                 <td><input type="checkbox" style="width:95%" ng-model="ctrl.client.IsActive" /></td>';
         sClientTemplate    += '             </tr>';
         sClientTemplate    += '             <tr>';
         sClientTemplate    += '                 <td>Notes</td>';
-        sClientTemplate    += '                 <td colspan="3"><input type="text" style="width:98%" ng-model="client.Notes" /></td>';
+        sClientTemplate    += '                 <td colspan="3"><input type="text" style="width:98%" ng-model="ctrl.client.Notes" /></td>';
         sClientTemplate    += '             </tr>';
         sClientTemplate    += '         </table>';
         sClientTemplate    += '         <p>';
-        sClientTemplate    += '             <input type="button" class="button" value="OK" ng-click="apply(true)" />';
-        sClientTemplate    += '             <input type="button" class="button" value="Apply" ng-click="apply(false)" />';
-        sClientTemplate    += '             <input type="button" class="button" value="Cancel" ng-click="close()" />';
-        sClientTemplate    += '             <input type="button" class="buttonDelete" value="Delete" ng-click="delete()" />';
+        sClientTemplate    += '             <input type="button" class="button" value="OK" ng-click="ctrl.apply(true)" />';
+        sClientTemplate    += '             <input type="button" class="button" value="Apply" ng-click="ctrl.apply(false)" />';
+        sClientTemplate    += '             <input type="button" class="button" value="Cancel" ng-click="ctrl.close()" />';
+        sClientTemplate    += '             <input type="button" class="buttonDelete" value="Delete" ng-click="ctrl.delete()" />';
         sClientTemplate    += '         </p>';
         sClientTemplate    += '     </form>';
         sClientTemplate    += '</div>';
@@ -184,55 +184,58 @@
             $routeProvider.when('/:pageNumber?/:filter?', {template: sClientsTemplate});
         });
 
-        app.controller('ClientsController', function($scope, $http, $routeParams, $location)
+        app.controller('ClientsController', function($http, $routeParams, $location)
         {
-            $scope.clients = undefined;
-            $scope.links = undefined;
-            $scope.filter = $routeParams.filter ? $routeParams.filter : '';
-            window.document.getElementById('filter').focus();
+            var ctrl = this;
+
+            ctrl.clients = undefined;
+            ctrl.links = undefined;
+            ctrl.filter = $routeParams.filter ? $routeParams.filter : '';
 
             var pageNumber = $routeParams.pageNumber ? $routeParams.pageNumber : 1;
 
-            api.readPage($http, pageNumber, $scope.filter, function(data)
+            ctrl.filterChanged = function()
             {
-                $scope.clients = data.data;
-                $scope.links = data.links;
+                api.readPage($http, pageNumber, ctrl.filter, function(data)
+                {
+                    ctrl.clients = data.data;
+                    ctrl.links = data.links;
 
-                firstTime();
-            });
-
-            $scope.gotoClient = function(clientId)
-            {
-                $location.path('/client/' + clientId).search({fromPage: pageNumber, filter: $scope.filter});
+                    firstTime();
+                });
             };
 
-            $scope.createNew = function()
+            ctrl.gotoClient = function(clientId)
             {
-                $location.path('/client/').search({fromPage: pageNumber, filter: $scope.filter});
+                $location.path('/client/' + clientId).search({fromPage: pageNumber, filter: ctrl.filter});
             };
 
-            $scope.filterChanged = function()
+            ctrl.createNew = function()
             {
-                $location.path('/' + 1 + '/' + $scope.filter);
+                $location.path('/client/').search({fromPage: pageNumber, filter: ctrl.filter});
             };
 
-            $scope.filterCleared = function()
+            ctrl.filterCleared = function()
             {
-                $scope.filter = '';
-                $scope.filterChanged();
+                ctrl.filter = '';
+                ctrl.filterChanged();
             };
+
+            ctrl.filterChanged();
         });
 
-        app.controller('ClientController', function($scope, $http, $routeParams, $location)
+        app.controller('ClientController', function($http, $routeParams, $location)
         {
-            $scope.client = undefined;
-            $scope.clientId = $routeParams.clientId;
-            $scope.fromPage = $location.search().fromPage ? $location.search().fromPage : 1;
+            var ctrl = this;
+
+            ctrl.client = undefined;
+            ctrl.clientId = $routeParams.clientId;
+            ctrl.fromPage = $location.search().fromPage ? $location.search().fromPage : 1;
 
             if (typeof($routeParams.clientId) === 'undefined')
             {
                 // Blank client record (create operation, if applied)
-                $scope.client =
+                ctrl.client =
                 {
                     'Title': '',
                     'Firstname': '',
@@ -254,29 +257,29 @@
                 // Read existing client record (update operation, if applied)
                 api.read($http, $routeParams.clientId, function(data)
                 {
-                    $scope.client = data.data;
+                    ctrl.client = data.data;
 
                     firstTime();
                 });
             }
 
-            $scope.close = function()
+            ctrl.close = function()
             {
-                $location.path('/' + $scope.fromPage + '/' + $scope.filter);
+                $location.path('/' + ctrl.fromPage + '/' + $routeParams.filter);
             };
 
-            $scope.apply = function(bClose)
+            ctrl.apply = function(bClose)
             {
-                if (typeof($scope.clientId) === 'undefined')
+                if (typeof(ctrl.clientId) === 'undefined')
                 {
                     // Create new client record
-                    api.create($http, $scope.client, function(data)
+                    api.create($http, ctrl.client, function(data)
                     {
-                        $scope.clientId = data.id;
+                        ctrl.clientId = data.id;
 
                         if (bClose)
                         {
-                            $scope.close();
+                            ctrl.close();
                         }
 
                         firstTime();
@@ -285,11 +288,11 @@
                 else
                 {
                     // Update existing client record
-                    api.update($http, $scope.clientId, $scope.client, function()
+                    api.update($http, ctrl.clientId, ctrl.client, function()
                     {
                         if (bClose)
                         {
-                            $scope.close();
+                            ctrl.close();
                         }
 
                         firstTime();
@@ -297,19 +300,19 @@
                 }
             };
 
-            $scope.delete = function()
+            ctrl.delete = function()
             {
-                if (typeof($scope.clientId) === 'undefined')
+                if (typeof(ctrl.clientId) === 'undefined')
                 {
                     // Abandon new/never created client record
-                    $scope.close();
+                    ctrl.close();
                 }
                 else
                 {
                     // Delete existing client record
-                    api.delete($http, $scope.clientId, function()
+                    api.delete($http, ctrl.clientId, function()
                     {
-                        $scope.close();
+                        ctrl.close();
                         firstTime();
                     });
                 }
