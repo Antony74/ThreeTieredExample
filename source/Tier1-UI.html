@@ -10,6 +10,7 @@
         table
         {
 	        border-collapse:collapse;
+			white-space:nowrap;
         }
 
         table, th, td
@@ -106,6 +107,7 @@
         sClientsTemplate    += '        <span>Filter&nbsp;</span><input type="text" id="filter" ng-model="ctrl.filter" ng-change="ctrl.filterChanged()"/><input type="button" value="X" ng-click="ctrl.filterCleared()"/>';
         sClientsTemplate    += '    </div>';
 
+        sClientsTemplate    += '    <div style="overflow-x:auto">';
         sClientsTemplate    += '    <table>';
         sClientsTemplate    += '        <tr>';
         sClientsTemplate    += '            <th ng-repeat="(name, value) in ctrl.clients[0].fields">{{name}}</th>';
@@ -114,6 +116,7 @@
         sClientsTemplate    += '            <td ng-repeat="value in client.fields">{{value}}</td>';
         sClientsTemplate    += '        </tr>';
         sClientsTemplate    += '    </table>';
+        sClientsTemplate    += '    </div>';
 
         sClientsTemplate    += '    <input type="button" style="margin:5px" value="Create new" ng-click="ctrl.createNew()" />';
         sClientsTemplate    += '    <span ng-repeat="link in ctrl.links" class="navigation">';
