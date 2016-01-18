@@ -74,7 +74,7 @@ var jsApi =
             sFilter = sFilter.toString().toLowerCase();
 
             var PAGESIZE = 20;
-            var nFirst = (nPageNum-1) * PAGESIZE;
+            var nFirst = ((nPageNum-1) * PAGESIZE) + 1;
             var nLast  = nFirst + PAGESIZE - 1;
             var nCurrentItem = 0;
             var bMore = false;
