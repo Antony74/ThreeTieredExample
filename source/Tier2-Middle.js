@@ -4,41 +4,6 @@ var arrIndex = [];
 var nextClientID = 1;
 
 //
-// databaseReady
-//
-var databaseReady = function(callback)
-{
-    var url = 'Tier3-DB.json';
-
-    /*global XMLHttpRequest:true*/
-    if (typeof(XMLHttpRequest) === 'undefined')
-    {
-        XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
-        url = 'file://' + __dirname + '/Tier3-DB.json';
-    }
-
-    var oReq = new XMLHttpRequest();
-    oReq.addEventListener('load', function()
-    {
-        db = JSON.parse(this.responseText);
-
-        arrIndex = createIndex(db);
-        nextClientID = arrIndex.length + 1;
-
-        // Closure.  Once the database is ready it stays ready.
-        databaseReady = function(callback)
-        {
-            callback();
-        };
-
-        callback();
-    });
-
-    oReq.open('GET', url);
-    oReq.send();
-};
-
-//
 // jsApi
 //
 var jsApi =
@@ -46,102 +11,93 @@ var jsApi =
     // Create
     create: function($http, client, callback)
     {
-        databaseReady(function()
-        {
-            db[nextClientID.toString()] = client;
-            var retval = {id: nextClientID};
-            ++nextClientID;
-            arrIndex = createIndex(db);
-            callback(retval);
-        });
+        db[nextClientID.toString()] = client;
+        var retval = {id: nextClientID};
+        ++nextClientID;
+        arrIndex = createIndex(db);
+        callback(retval);
     },
 
     // Read
     read: function($http, clientId, callback)
     {
-        databaseReady(function()
-        {
-            var client = db[clientId];
-            callback({data: client});
-        });
+        var client = db[clientId];
+        callback({data: client});
     },
 
     readPage: function($http, nPageNum, sFilter, callback)
     {
-        databaseReady(function()
+        nPageNum = parseInt(nPageNum);
+        sFilter = sFilter.toString().toLowerCase();
+
+        var PAGESIZE = 20;
+        var nFirst = ((nPageNum-1) * PAGESIZE) + 1;
+        var nLast  = nFirst + PAGESIZE - 1;
+        var nCurrentItem = 0;
+        var bMore = false;
+
+        var arrItems = [];
+
+        for (var nIndex = 0; nIndex < arrIndex.length; ++nIndex)
         {
-            nPageNum = parseInt(nPageNum);
-            sFilter = sFilter.toString().toLowerCase();
+            var client = db[arrIndex[nIndex]];
+            var bFound = false;
 
-            var PAGESIZE = 20;
-            var nFirst = ((nPageNum-1) * PAGESIZE) + 1;
-            var nLast  = nFirst + PAGESIZE - 1;
-            var nCurrentItem = 0;
-            var bMore = false;
-
-            var arrItems = [];
-
-            for (var nIndex = 0; nIndex < arrIndex.length; ++nIndex)
+            for (var fieldname in client)
             {
-                var client = db[arrIndex[nIndex]];
-                var bFound = false;
-
-                for (var fieldname in client)
+                if (client[fieldname].toString().toLowerCase().indexOf(sFilter) !== -1)
                 {
-                    if (client[fieldname].toString().toLowerCase().indexOf(sFilter) !== -1)
+                    bFound = true;
+                    break;
+                }
+            }
+
+            if (bFound)
+            {
+                ++nCurrentItem;
+
+                if (nCurrentItem >= nFirst)
+                {
+                    if (nCurrentItem > nLast)
                     {
-                        bFound = true;
+                        bMore = true;
                         break;
                     }
-                }
 
-                if (bFound)
-                {
-                    ++nCurrentItem;
-
-                    if (nCurrentItem >= nFirst)
-                    {
-                        if (nCurrentItem > nLast)
-                        {
-                            bMore = true;
-                            break;
-                        }
-
-                        var oClient = {clientId: arrIndex[nIndex], fields: client};
-                        arrItems.push(oClient);
-                    }
+                    var oClient = {clientId: arrIndex[nIndex], fields: client};
+                    arrItems.push(oClient);
                 }
             }
+        }
 
-            var arrLinks = [];
+        var arrLinks = [];
 
-            if (nPageNum > 1)
-            {
-                arrLinks.push({'rel': 'First', 'pageNumber': 1});
-                arrLinks.push({'rel': 'Previous', 'pageNumber': (nPageNum - 1)});
-            }
-            else
-            {
-                arrLinks.push({'rel': 'First'});
-                arrLinks.push({'rel': 'Previous'});
-            }
+        if (nPageNum > 1)
+        {
+            arrLinks.push({'rel': 'First', 'pageNumber': 1});
+            arrLinks.push({'rel': 'Previous', 'pageNumber': (nPageNum - 1)});
+        }
+        else
+        {
+            arrLinks.push({'rel': 'First'});
+            arrLinks.push({'rel': 'Previous'});
+        }
 
-            if (bMore)
-            {
-                arrLinks.push({'rel': 'Next', 'pageNumber': (nPageNum + 1)});
-                arrLinks.push({'rel': 'Last', 'pageNumber': Math.floor(arrIndex.length/PAGESIZE)});
-            }
-            else
-            {
-                arrLinks.push({'rel': 'Next'});
-                arrLinks.push({'rel': 'Last'});
-            }
+        if (bMore)
+        {
+            arrLinks.push({'rel': 'Next', 'pageNumber': (nPageNum + 1)});
+            arrLinks.push({'rel': 'Last', 'pageNumber': Math.floor(arrIndex.length/PAGESIZE)});
+        }
+        else
+        {
+            arrLinks.push({'rel': 'Next'});
+            arrLinks.push({'rel': 'Last'});
+        }
 
-            callback(
-            {
-                'data': arrItems,
-                'links': arrLinks
-            });
+        callback(
+        {
+            'data': arrItems,
+            'links': arrLinks
         });
     },
 
@@ -150,38 +106,65 @@ var jsApi =
     {
         clientId = parseInt(clientId);
 
-        databaseReady(function()
+        if (db[clientId] === undefined)
         {
-            if (db[clientId] === undefined)
-            {
-                callback(false);
-            }
-            else
-            {
-                db[clientId] = client;
-                arrIndex = createIndex(db);
-                callback(true);
-            }
-        });
+            callback(false);
+        }
+        else
+        {
+            db[clientId] = client;
+            arrIndex = createIndex(db);
+            callback(true);
+        }
     },
 
     // Delete
     delete: function($http, clientId, callback)
     {
-        databaseReady(function()
+        if (db[clientId] === undefined)
         {
-            if (db[clientId] === undefined)
-            {
-                callback(false);
-            }
-            else
-            {
-                delete db[clientId];
-                arrIndex = createIndex(db);
-                callback(true);
-            }
-        });
+            callback(false);
+        }
+        else
+        {
+            delete db[clientId];
+            arrIndex = createIndex(db);
+            callback(true);
+        }
     },
+
+	// databaseReady
+	databaseReady: function(callback)
+	{
+		var url = 'Tier3-DB.json';
+
+		/*global XMLHttpRequest:true*/
+		if (typeof(XMLHttpRequest) === 'undefined')
+		{
+			XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+			url = 'file://' + __dirname + '/Tier3-DB.json';
+		}
+
+		var oReq = new XMLHttpRequest();
+		oReq.addEventListener('load', function()
+		{
+			db = JSON.parse(this.responseText);
+
+			arrIndex = createIndex(db);
+			nextClientID = arrIndex.length + 1;
+
+			// Closure.  Once the database is ready it stays ready.
+			jsApi.databaseReady = function(callback)
+			{
+				callback();
+			};
+
+			callback();
+		});
+
+		oReq.open('GET', url);
+		oReq.send();
+	}
 };
 
 /*global window*/
@@ -196,7 +179,7 @@ else
 
     exports.serverStarted = function() {};
 
-    databaseReady(function()
+    jsApi.databaseReady(function()
     {
         var express = require('express');
 
