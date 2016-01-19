@@ -159,6 +159,7 @@ var jsApi =
             else
             {
                 db[clientId] = client;
+                arrIndex = createIndex(db);
                 callback(true);
             }
         });
