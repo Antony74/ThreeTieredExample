@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html ng-app="myApp">
 <head>
 
@@ -101,7 +102,7 @@
         }
 
         var sClientsTemplate = '<br><br>';
-        sClientsTemplate    += '<div ng-controller="ClientsController as ctrl">';
+        sClientsTemplate    += '<div>';
 
         sClientsTemplate    += '    <div style="margin:5px">';
         sClientsTemplate    += '        <span>Filter&nbsp;</span><input type="text" id="filter" ng-model="ctrl.filter" ng-change="ctrl.filterChanged()"/><input type="button" value="X" ng-click="ctrl.filterCleared()"/>';
@@ -125,7 +126,7 @@
         sClientsTemplate    += '    </span>';
         sClientsTemplate    += '</div>';
 
-        var sClientTemplate = '<div ng-controller="ClientController as ctrl">';
+        var sClientTemplate = '<div>';
         sClientTemplate    += '     <form>';
         sClientTemplate    += '         <table style="width: 585px">';
         sClientTemplate    += '             <tr>';
@@ -183,8 +184,17 @@
 
         app.config(function($routeProvider)
         {
-            $routeProvider.when('/client/:clientId?', {template: sClientTemplate});
-            $routeProvider.when('/:pageNumber?/:filter?', {template: sClientsTemplate});
+            $routeProvider.when('/client/:clientId?',
+			{
+				template: sClientTemplate,
+				controller: 'ClientController as ctrl'
+			});
+
+            $routeProvider.when('/:pageNumber?/:filter?',
+			{
+				template: sClientsTemplate,
+				controller: 'ClientsController as ctrl'
+			});
         });
 
         app.controller('ClientsController', function($http, $routeParams, $location)
