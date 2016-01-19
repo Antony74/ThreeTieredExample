@@ -197,8 +197,13 @@
 
             var pageNumber = $routeParams.pageNumber ? $routeParams.pageNumber : 1;
 
-            ctrl.filterChanged = function()
+            ctrl.filterChanged = function(bInitialising)
             {
+				if (!bInitialising)
+				{
+					pageNumber = 1;
+				}
+
                 api.readPage($http, pageNumber, ctrl.filter, function(data)
                 {
                     ctrl.clients = data.data;
@@ -224,7 +229,7 @@
                 ctrl.filterChanged();
             };
 
-            ctrl.filterChanged();
+            ctrl.filterChanged(true);
         });
 
         app.controller('ClientController', function($http, $routeParams, $location)
