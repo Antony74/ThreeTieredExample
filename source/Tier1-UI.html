@@ -31,6 +31,11 @@
 	        background-color: #D0D0FF;
         }
 
+        .field
+        {
+            width: 95%;
+        }
+
         .navigation
         {
             padding: 5px;
@@ -128,46 +133,46 @@
 
         var sClientTemplate = '<div>';
         sClientTemplate    += '     <form>';
-        sClientTemplate    += '         <table style="width: 585px">';
+        sClientTemplate    += '         <table>';
         sClientTemplate    += '             <tr>';
         sClientTemplate    += '                 <td>Title</td>';
-        sClientTemplate    += '                <td><input type="text" style="width:95%" ng-model="ctrl.client.Title" /></td>';
+        sClientTemplate    += '                <td><input type="text" class="field" ng-model="ctrl.client.Title" /></td>';
         sClientTemplate    += '                 <td>Firstname</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.Firstname" /></td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.Firstname" /></td>';
         sClientTemplate    += '             </tr>';
         sClientTemplate    += '             <tr>';
         sClientTemplate    += '                 <td>Initial</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.Initial" /></td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.Initial" /></td>';
         sClientTemplate    += '                 <td>Surname</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.Surname" /></td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.Surname" /></td>';
         sClientTemplate    += '             </tr>';
         sClientTemplate    += '             <tr>';
         sClientTemplate    += '                 <td>AddressLine1</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.AddressLine1" /></td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.AddressLine1" /></td>';
         sClientTemplate    += '                 <td>AddressLine2</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.AddressLine2" /></td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.AddressLine2" /></td>';
         sClientTemplate    += '             </tr>';
         sClientTemplate    += '             <tr>';
         sClientTemplate    += '                 <td>Town</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.Town" /></td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.Town" /></td>';
         sClientTemplate    += '                 <td>Postcode</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.Postcode" /></td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.Postcode" /></td>';
         sClientTemplate    += '             </tr>';
         sClientTemplate    += '             <tr>';
         sClientTemplate    += '                 <td>HomeNumber</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.HomeNumber" /></td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.HomeNumber" /></td>';
         sClientTemplate    += '                 <td>EmailAddress</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.EmailAddress" /></td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.EmailAddress" /></td>';
         sClientTemplate    += '             </tr>';
         sClientTemplate    += '             <tr>';
         sClientTemplate    += '                 <td>MobileNumber</td>';
-        sClientTemplate    += '                 <td><input type="text" style="width:95%" ng-model="ctrl.client.MobileNumber" /></td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.MobileNumber" /></td>';
         sClientTemplate    += '                 <td>IsActive</td>';
-        sClientTemplate    += '                 <td><input type="checkbox" style="width:95%" ng-model="ctrl.client.IsActive" /></td>';
+        sClientTemplate    += '                 <td><input type="checkbox" class="field" ng-model="ctrl.client.IsActive" /></td>';
         sClientTemplate    += '             </tr>';
         sClientTemplate    += '             <tr>';
         sClientTemplate    += '                 <td>Notes</td>';
-        sClientTemplate    += '                 <td colspan="3"><input type="text" style="width:98%" ng-model="ctrl.client.Notes" /></td>';
+        sClientTemplate    += '                 <td colspan="3"><input type="text" class="field" style="width:98%" ng-model="ctrl.client.Notes" /></td>';
         sClientTemplate    += '             </tr>';
         sClientTemplate    += '         </table>';
         sClientTemplate    += '         <p>';
