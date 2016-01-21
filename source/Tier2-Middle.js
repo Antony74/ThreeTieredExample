@@ -9,7 +9,7 @@ var nextClientID = 1;
 var jsApi =
 {
     // Create
-    create: function($http, client, callback)
+    create: function(client, callback)
     {
         db[nextClientID.toString()] = client;
         var retval = {id: nextClientID};
@@ -19,13 +19,13 @@ var jsApi =
     },
 
     // Read
-    read: function($http, clientId, callback)
+    read: function(clientId, callback)
     {
         var client = db[clientId];
         callback({data: client});
     },
 
-    readPage: function($http, nPageNum, sFilter, callback)
+    readPage: function(nPageNum, sFilter, callback)
     {
         nPageNum = parseInt(nPageNum);
         sFilter = sFilter.toString().toLowerCase();
@@ -103,7 +103,7 @@ var jsApi =
     },
 
     // Update
-    update: function($http, clientId, client, callback)
+    update: function(clientId, client, callback)
     {
         clientId = parseInt(clientId);
 
@@ -120,7 +120,7 @@ var jsApi =
     },
 
     // Delete
-    delete: function($http, clientId, callback)
+    delete: function(clientId, callback)
     {
         if (db[clientId] === undefined)
         {
@@ -217,7 +217,7 @@ function getHttpApi(jsApi)
     // Create
     httpApi.post('/clients', function(req, res)
     {
-        jsApi.create(null, req.body, function(data)
+        jsApi.create(req.body, function(data)
         {
             res.json(data);
         });
@@ -235,7 +235,7 @@ function getHttpApi(jsApi)
     {
         setNoCacheHeaders(res);
 
-        jsApi.read(null, req.params.id, function(data)
+        jsApi.read(req.params.id, function(data)
         {
             if (data.data === undefined)
             {
@@ -254,7 +254,7 @@ function getHttpApi(jsApi)
 
         var sFilter = req.params.filter ? req.params.filter : '';
 
-        jsApi.readPage(null, req.params.pagenum, sFilter, function(data)
+        jsApi.readPage(req.params.pagenum, sFilter, function(data)
         {
             res.json(data);
         });
@@ -263,7 +263,7 @@ function getHttpApi(jsApi)
     // Update
     httpApi.put('/clients/:id', function(req, res)
     {
-        jsApi.update(null, req.params.id, req.body, function(bOK)
+        jsApi.update(req.params.id, req.body, function(bOK)
         {
             if (bOK)
             {
@@ -279,7 +279,7 @@ function getHttpApi(jsApi)
     // Delete
     httpApi.delete('/clients/:id', function(req, res)
     {
-        jsApi.delete(null, req.params.id, function(bDone)
+        jsApi.delete(req.params.id, function(bDone)
         {
             if (bDone)
             { 

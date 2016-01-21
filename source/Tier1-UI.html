@@ -66,47 +66,6 @@
             firstTime = function() {};
         };
 
-        /*global window*/
-        var api = window.threeTieredExampleApi;
-
-        if (typeof(api) === 'undefined')
-        {
-            api =
-            {
-                create: function($http, client, callback)
-                {
-                    $http.post('/api/v1/Clients/', client).success(callback);
-                },
-
-                read: function($http, clientId, callback)
-                {
-                    $http.get('/api/v1/Clients/' + clientId).success(callback);
-                },
-
-                readPage: function($http, pageNumber, sFilter, callback)
-                {
-                    $http.get('/api/v1/Clients/pages/' + pageNumber + '/' + sFilter).success(callback);
-                },
-
-                update: function($http, clientId, client, callback)
-                {
-                    $http.put('/api/v1/Clients/' + clientId, client).success(callback);
-                },
-
-                delete: function($http, clientId, callback)
-                {
-                    $http.delete('/api/v1/Clients/' + clientId).success(callback);
-                },
-
-				databaseReady: function(callback)
-				{
-					callback();
-				},
-            };
-
-            firstTime = function() {};
-        }
-
         var sClientsTemplate = '<br><br>';
         sClientsTemplate    += '<div>';
 
@@ -188,6 +147,57 @@
         /*global angular*/
         var app = angular.module('myApp', ['ng', 'ngRoute']);
 
+        /*global window*/
+        if (typeof(window.threeTieredExampleApi) === 'undefined')
+        {
+			app.factory('api', ['$http', function($http)
+			{
+				var api =
+				{
+					create: function(client, callback)
+					{
+						$http.post('/api/v1/Clients/', client).success(callback);
+					},
+
+					read: function(clientId, callback)
+					{
+						$http.get('/api/v1/Clients/' + clientId).success(callback);
+					},
+
+					readPage: function(pageNumber, sFilter, callback)
+					{
+						$http.get('/api/v1/Clients/pages/' + pageNumber + '/' + sFilter).success(callback);
+					},
+
+					update: function(clientId, client, callback)
+					{
+						$http.put('/api/v1/Clients/' + clientId, client).success(callback);
+					},
+
+					delete: function(clientId, callback)
+					{
+						$http.delete('/api/v1/Clients/' + clientId).success(callback);
+					},
+
+					databaseReady: function(callback)
+					{
+						callback();
+					},
+				};
+
+				return api;
+            }]);
+
+            firstTime = function() {};
+        }
+		else
+		{
+			app.factory('api', [function()
+			{
+				return window.threeTieredExampleApi;
+			}]);
+		}
+
         app.config(function($routeProvider)
         {
             $routeProvider.when('/client/:clientId?',
@@ -203,7 +213,7 @@
 			});
         });
 
-        app.controller('ClientsController', function($http, $routeParams, $location)
+        app.controller('ClientsController', function(api, $routeParams, $location)
         {
             var ctrl = this;
 
@@ -220,7 +230,7 @@
 					pageNumber = 1;
 				}
 
-                api.readPage($http, pageNumber, ctrl.filter, function(data)
+                api.readPage(pageNumber, ctrl.filter, function(data)
                 {
                     ctrl.clients = data.data;
                     ctrl.links = data.links;
@@ -248,7 +258,7 @@
             ctrl.filterChanged(true);
         });
 
-        app.controller('ClientController', function($http, $routeParams, $location)
+        app.controller('ClientController', function(api, $routeParams, $location)
         {
             var ctrl = this;
 
@@ -279,7 +289,7 @@
             else
             {
                 // Read existing client record (update operation, if applied)
-                api.read($http, $routeParams.clientId, function(data)
+                api.read($routeParams.clientId, function(data)
                 {
                     ctrl.client = data.data;
 
@@ -297,7 +307,7 @@
                 if (typeof(ctrl.clientId) === 'undefined')
                 {
                     // Create new client record
-                    api.create($http, ctrl.client, function(data)
+                    api.create(ctrl.client, function(data)
                     {
                         ctrl.clientId = data.id;
 
@@ -312,7 +322,7 @@
                 else
                 {
                     // Update existing client record
-                    api.update($http, ctrl.clientId, ctrl.client, function()
+                    api.update(ctrl.clientId, ctrl.client, function()
                     {
                         if (bClose)
                         {
@@ -334,7 +344,7 @@
                 else
                 {
                     // Delete existing client record
-                    api.delete($http, ctrl.clientId, function()
+                    api.delete(ctrl.clientId, function()
                     {
                         ctrl.close();
                         firstTime();
@@ -344,7 +354,7 @@
 
         });
 
-		api.databaseReady(function()
+		angular.injector(['myApp']).get('api').databaseReady(function()
 		{
 			/*global document*/
 			angular.element(document).ready(function()
