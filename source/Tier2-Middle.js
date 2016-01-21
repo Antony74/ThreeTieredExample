@@ -61,11 +61,12 @@ var jsApi =
                     if (nCurrentItem > nLast)
                     {
                         bMore = true;
-                        break;
                     }
-
-                    var oClient = {clientId: arrIndex[nIndex], fields: client};
-                    arrItems.push(oClient);
+					else
+					{
+						var oClient = {clientId: arrIndex[nIndex], fields: client};
+						arrItems.push(oClient);
+					}
                 }
             }
         }
@@ -86,7 +87,7 @@ var jsApi =
         if (bMore)
         {
             arrLinks.push({'rel': 'Next', 'pageNumber': (nPageNum + 1)});
-            arrLinks.push({'rel': 'Last', 'pageNumber': Math.floor(arrIndex.length/PAGESIZE)});
+            arrLinks.push({'rel': 'Last', 'pageNumber': Math.ceil(nCurrentItem/PAGESIZE)});
         }
         else
         {

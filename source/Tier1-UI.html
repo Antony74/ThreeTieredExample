@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="myApp">
+<html>
 <head>
 
     <title>Three tiered example</title>
@@ -64,10 +64,6 @@
             /*global alert*/
             alert('Welcome to the in-browser demo of this three tiered example');
             firstTime = function() {};
-
-            // In this mode the controllers often don't sync properly first time in.  The
-            // alert is a workaround which prods them into action, and I did want to make
-            // this kind of clear distinction between modes anyway.
         };
 
         /*global window*/
@@ -101,6 +97,11 @@
                 {
                     $http.delete('/api/v1/Clients/' + clientId).success(callback);
                 },
+
+				databaseReady: function(callback)
+				{
+					callback();
+				},
             };
 
             firstTime = function() {};
@@ -342,6 +343,15 @@
             };
 
         });
+
+		api.databaseReady(function()
+		{
+			/*global document*/
+			angular.element(document).ready(function()
+			{
+				angular.bootstrap(document, ['myApp']);
+			});
+		});
 
     </script>
 </head>
