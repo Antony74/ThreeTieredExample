@@ -20,7 +20,8 @@
     "scripts": {
         "lint": "cd ../devutils && npm run lint --silent && cd ../source",
         "test": "cd ../devutils && npm run test --silent && cd ../source",
-        "browserify": "cd ../devutils && npm run browserify --silent && cd ../source"
+        "browserify": "cd ../devutils && npm run browserify --silent && cd ../source",
+		"karma":  "cd ../devutils && npm run karma --silent && cd ../source"
     },
     "version": "1.0.0",
     "readme": "Three tiered example.",
