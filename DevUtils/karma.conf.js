@@ -1,7 +1,7 @@
 module.exports = function(config) {
   config.set({
     basePath: '../karmaified',
-    frameworks: ['mocha'],
+    frameworks: ['mocha', 'chai'],
     files: [
 		'angular.js',
 		'angular-route.js',

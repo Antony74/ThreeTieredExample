@@ -24,6 +24,7 @@
         "xmlhttprequest": "1.8.0",
 		"karma": "0.12.28",
 		"karma-mocha": "0.2.1",
+		"karma-chai":  "0.1.0",
 		"karma-chrome-launcher": "0.1.12"
 		},
     "scripts": {
