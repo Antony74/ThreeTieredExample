@@ -132,7 +132,7 @@ describe('Clients controller', function()
         assert.equal(location.path(), '/client/2');
     });
 
-    it('create a new client', function()
+    it('can create a new client', function()
     {
         assert.equal(location.path(), '');
 
@@ -149,3 +149,154 @@ describe('Clients controller', function()
 	});
 });
 
+describe('Client controller - existing client', function()
+{
+	var ctrl, mockBackend, location;
+
+	beforeEach(inject(function($controller, $httpBackend, $location, $routeParams)
+	{
+		mockBackend = $httpBackend;
+        location = $location;
+		$routeParams.clientId = 1;
+		$routeParams.filter = '';
+		ctrl = $controller('ClientController');
+
+		mockBackend.expectGET('/api/v1/Clients/1').respond(200,
+		{
+			'data':
+			{
+				'Title': 'Dr.',
+				'Firstname': 'Edison',
+				'Surname': 'Bartell'
+			}
+		});
+	}));
+
+	it('populates', function()
+	{
+	    assert.equal(ctrl.client, undefined);
+
+		mockBackend.flush();
+
+		assert.deepEqual(ctrl.client,
+		{
+			'Title': 'Dr.',
+			'Firstname': 'Edison',
+			'Surname': 'Bartell',
+		});
+	});
+
+	it('OKs (applies and closes)', function()
+	{
+		mockBackend.flush();
+
+		ctrl.client = 
+		{
+			'Title': 'Mr.',
+			'Firstname': 'Eddy',
+			'Surname': 'Barnes',
+		};
+
+		ctrl.apply(true);
+
+		mockBackend.expectPUT('/api/v1/Clients/1', 
+		{
+			'Title': 'Mr.',
+			'Firstname': 'Eddy',
+			'Surname': 'Barnes',
+		}).respond(200);
+
+		mockBackend.flush();
+
+		assert.equal(location.path(), '/1/');
+	});
+
+	it('deletes', function()
+	{
+		mockBackend.flush();
+		ctrl.delete();
+
+		mockBackend.expectDELETE('/api/v1/Clients/1').respond(200);
+
+		mockBackend.flush();
+
+		assert.equal(location.path(), '/1/');
+	})
+
+	afterEach(function()
+	{
+		mockBackend.verifyNoOutstandingExpectation();
+		mockBackend.verifyNoOutstandingRequest();
+	});
+
+});
+
+describe('Client controller - new client', function()
+{
+	var ctrl, mockBackend, location;
+
+	beforeEach(inject(function($controller, $httpBackend, $location, $routeParams)
+	{
+		mockBackend = $httpBackend;
+        location = $location;
+		$routeParams.filter = '';
+		ctrl = $controller('ClientController');
+	}));
+
+	it('populates (blank)', function()
+	{
+		assert.deepEqual(ctrl.client,
+		{
+			'Title': '',
+			'Firstname': '',
+			'Initial': '',
+			'Surname': '',
+			'AddressLine1': '',
+			'AddressLine2': '',
+			'Town': '',
+			'Postcode': '',
+			'HomeNumber': '',
+			'MobileNumber': '',
+			'EmailAddress': '',
+			'Notes': '',
+			'IsActive': true
+		});
+	});
+
+	it('OKs (applies and closes)', function()
+	{
+		ctrl.client = 
+		{
+			'Title': 'Mr.',
+			'Firstname': 'Eddy',
+			'Surname': 'Barnes',
+		};
+
+		ctrl.apply(true);
+
+		mockBackend.expectPOST('/api/v1/Clients/',
+		{
+			'Title': 'Mr.',
+			'Firstname': 'Eddy',
+			'Surname': 'Barnes',
+		}).respond(200, {id: 66});
+
+		mockBackend.flush();
+
+		assert.equal(location.path(), '/1/');
+	});
+
+	it('deletes/discards', function()
+	{
+		ctrl.delete();
+
+		assert.equal(location.path(), '/1/');
+	})
+
+	afterEach(function()
+	{
+		mockBackend.verifyNoOutstandingExpectation();
+		mockBackend.verifyNoOutstandingRequest();
+	});
+
+});
