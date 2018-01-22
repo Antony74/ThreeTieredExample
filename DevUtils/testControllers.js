@@ -221,7 +221,7 @@ describe('Client controller - existing client', function()
 		mockBackend.flush();
 
 		assert.equal(location.path(), '/1/');
-	})
+	});
 
 	afterEach(function()
 	{
@@ -291,7 +291,7 @@ describe('Client controller - new client', function()
 		ctrl.delete();
 
 		assert.equal(location.path(), '/1/');
-	})
+	});
 
 	afterEach(function()
 	{
