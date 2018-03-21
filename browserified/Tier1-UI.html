@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Three tiered example</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-route.js"></script>
+
+    <style>
+        table
+        {
+	        border-collapse:collapse;
+			white-space:nowrap;
+        }
+
+        table, th, td
+        {
+	        border: 1px solid #0077DD;
+	        padding: 5px;
+        }
+
+        th
+        {
+	        color: #FFFFFF;
+	        background-color: #0077DD;
+        }
+
+        tr
+        {
+	        background-color: #D0D0FF;
+        }
+
+        .field
+        {
+            width: 95%;
+        }
+
+        .navigation
+        {
+            padding: 5px;
+        }
+
+        .button, .buttonDelete
+        {
+            width: 85px;
+            font-weight: bold;
+        }
+
+        .buttonDelete
+        {
+            position: fixed;
+            left:510px;
+            border-color:red;
+            background-color:pink;
+        }
+
+    </style>
+
+    <script src="Tier2-Middle.js"></script>
+    <script>
+
+        var firstTime = function()
+        {
+            /*global alert*/
+            alert('Welcome to the in-browser demo of this three tiered example');
+            firstTime = function() {};
+        };
+
+        var sClientsTemplate = '<br><br>';
+        sClientsTemplate    += '<div>';
+
+        sClientsTemplate    += '    <div style="margin:5px">';
+        sClientsTemplate    += '        <span>Filter&nbsp;</span><input type="text" id="filter" ng-model="ctrl.filter" ng-change="ctrl.filterChanged()"/><input type="button" value="X" ng-click="ctrl.filterCleared()"/>';
+        sClientsTemplate    += '    </div>';
+
+        sClientsTemplate    += '    <div style="overflow-x:auto">';
+        sClientsTemplate    += '    <table>';
+        sClientsTemplate    += '        <tr>';
+        sClientsTemplate    += '            <th ng-repeat="(name, value) in ctrl.clients[0].fields">{{name}}</th>';
+        sClientsTemplate    += '        </tr>';
+        sClientsTemplate    += '        <tr ng-dblclick="ctrl.gotoClient(client.clientId)" ng-repeat="client in ctrl.clients">';
+        sClientsTemplate    += '            <td ng-repeat="value in client.fields">{{value}}</td>';
+        sClientsTemplate    += '        </tr>';
+        sClientsTemplate    += '    </table>';
+        sClientsTemplate    += '    </div>';
+
+        sClientsTemplate    += '    <input type="button" style="margin:5px" value="Create new" ng-click="ctrl.createNew()" />';
+        sClientsTemplate    += '    <span ng-repeat="link in ctrl.links" class="navigation">';
+        sClientsTemplate    += '        <a href ng-show="link.pageNumber" ng-href="#{{link.pageNumber}}/{{ctrl.filter}}">{{link.rel}}</a>';
+        sClientsTemplate    += '        <span ng-show="!link.pageNumber">{{link.rel}}</span>';
+        sClientsTemplate    += '    </span>';
+        sClientsTemplate    += '</div>';
+
+        var sClientTemplate = '<div>';
+        sClientTemplate    += '     <form>';
+        sClientTemplate    += '         <table style="width: 585px">';
+        sClientTemplate    += '             <tr>';
+        sClientTemplate    += '                 <td>Title</td>';
+        sClientTemplate    += '                <td><input type="text" class="field" ng-model="ctrl.client.Title" /></td>';
+        sClientTemplate    += '                 <td>Firstname</td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.Firstname" /></td>';
+        sClientTemplate    += '             </tr>';
+        sClientTemplate    += '             <tr>';
+        sClientTemplate    += '                 <td>Initial</td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.Initial" /></td>';
+        sClientTemplate    += '                 <td>Surname</td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.Surname" /></td>';
+        sClientTemplate    += '             </tr>';
+        sClientTemplate    += '             <tr>';
+        sClientTemplate    += '                 <td>AddressLine1</td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.AddressLine1" /></td>';
+        sClientTemplate    += '                 <td>AddressLine2</td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.AddressLine2" /></td>';
+        sClientTemplate    += '             </tr>';
+        sClientTemplate    += '             <tr>';
+        sClientTemplate    += '                 <td>Town</td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.Town" /></td>';
+        sClientTemplate    += '                 <td>Postcode</td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.Postcode" /></td>';
+        sClientTemplate    += '             </tr>';
+        sClientTemplate    += '             <tr>';
+        sClientTemplate    += '                 <td>HomeNumber</td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.HomeNumber" /></td>';
+        sClientTemplate    += '                 <td>EmailAddress</td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.EmailAddress" /></td>';
+        sClientTemplate    += '             </tr>';
+        sClientTemplate    += '             <tr>';
+        sClientTemplate    += '                 <td>MobileNumber</td>';
+        sClientTemplate    += '                 <td><input type="text" class="field" ng-model="ctrl.client.MobileNumber" /></td>';
+        sClientTemplate    += '                 <td>IsActive</td>';
+        sClientTemplate    += '                 <td><input type="checkbox" class="field" ng-model="ctrl.client.IsActive" /></td>';
+        sClientTemplate    += '             </tr>';
+        sClientTemplate    += '             <tr>';
+        sClientTemplate    += '                 <td>Notes</td>';
+        sClientTemplate    += '                 <td colspan="3"><input type="text" class="field" style="width:98%" ng-model="ctrl.client.Notes" /></td>';
+        sClientTemplate    += '             </tr>';
+        sClientTemplate    += '         </table>';
+        sClientTemplate    += '         <p>';
+        sClientTemplate    += '             <input type="button" class="button" value="OK" ng-click="ctrl.apply(true)" />';
+        sClientTemplate    += '             <input type="button" class="button" value="Apply" ng-click="ctrl.apply(false)" />';
+        sClientTemplate    += '             <input type="button" class="button" value="Cancel" ng-click="ctrl.close()" />';
+        sClientTemplate    += '             <input type="button" class="buttonDelete" value="Delete" ng-click="ctrl.delete()" />';
+        sClientTemplate    += '         </p>';
+        sClientTemplate    += '     </form>';
+        sClientTemplate    += '</div>';
+
+        /*global angular*/
+        var app = angular.module('myApp', ['ng', 'ngRoute']);
+
+        /*global window*/
+        if (typeof(window.threeTieredExampleApi) === 'undefined')
+        {
+			app.factory('api', ['$http', function($http)
+			{
+				var api =
+				{
+					create: function(client, callback)
+					{
+						$http.post('/api/v1/Clients/', client).success(callback);
+					},
+
+					read: function(clientId, callback)
+					{
+						$http.get('/api/v1/Clients/' + clientId).success(callback);
+					},
+
+					readPage: function(pageNumber, sFilter, callback)
+					{
+						$http.get('/api/v1/Clients/pages/' + pageNumber + '/' + sFilter).success(callback);
+					},
+
+					update: function(clientId, client, callback)
+					{
+						$http.put('/api/v1/Clients/' + clientId, client).success(callback);
+					},
+
+					delete: function(clientId, callback)
+					{
+						$http.delete('/api/v1/Clients/' + clientId).success(callback);
+					},
+
+					databaseReady: function(callback)
+					{
+						callback();
+					},
+				};
+
+				return api;
+            }]);
+
+            firstTime = function() {};
+        }
+		else
+		{
+			app.factory('api', [function()
+			{
+				return window.threeTieredExampleApi;
+			}]);
+		}
+
+        app.config(function($routeProvider)
+        {
+            $routeProvider.when('/client/:clientId?',
+			{
+				template: sClientTemplate,
+				controller: 'ClientController as ctrl'
+			});
+
+            $routeProvider.when('/:pageNumber?/:filter?',
+			{
+				template: sClientsTemplate,
+				controller: 'ClientsController as ctrl'
+			});
+        });
+
+        app.controller('ClientsController', function(api, $routeParams, $location)
+        {
+            var ctrl = this;
+
+            ctrl.clients = undefined;
+            ctrl.links = undefined;
+            ctrl.filter = $routeParams.filter ? $routeParams.filter : '';
+
+            var pageNumber = $routeParams.pageNumber ? $routeParams.pageNumber : 1;
+
+            ctrl.filterChanged = function(bInitialising)
+            {
+				if (!bInitialising)
+				{
+					pageNumber = 1;
+				}
+
+                api.readPage(pageNumber, ctrl.filter, function(data)
+                {
+                    ctrl.clients = data.data;
+                    ctrl.links = data.links;
+
+                    firstTime();
+                });
+            };
+
+            ctrl.gotoClient = function(clientId)
+            {
+                $location.path('/client/' + clientId).search({fromPage: pageNumber, filter: ctrl.filter});
+            };
+
+            ctrl.createNew = function()
+            {
+                $location.path('/client/').search({fromPage: pageNumber, filter: ctrl.filter});
+            };
+
+            ctrl.filterCleared = function()
+            {
+                ctrl.filter = '';
+                ctrl.filterChanged();
+            };
+
+            ctrl.filterChanged(true);
+        });
+
+        app.controller('ClientController', function(api, $routeParams, $location)
+        {
+            var ctrl = this;
+
+            ctrl.client = undefined;
+            ctrl.clientId = $routeParams.clientId;
+            ctrl.fromPage = $location.search().fromPage ? $location.search().fromPage : 1;
+
+            if (typeof($routeParams.clientId) === 'undefined')
+            {
+                // Blank client record (create operation, if applied)
+                ctrl.client =
+                {
+                    'Title': '',
+                    'Firstname': '',
+                    'Initial': '',
+                    'Surname': '',
+                    'AddressLine1': '',
+                    'AddressLine2': '',
+                    'Town': '',
+                    'Postcode': '',
+                    'HomeNumber': '',
+                    'MobileNumber': '',
+                    'EmailAddress': '',
+                    'Notes': '',
+                    'IsActive': true
+                };
+            }
+            else
+            {
+                // Read existing client record (update operation, if applied)
+                api.read($routeParams.clientId, function(data)
+                {
+                    ctrl.client = data.data;
+
+                    firstTime();
+                });
+            }
+
+            ctrl.close = function()
+            {
+                $location.path('/' + ctrl.fromPage + '/' + $routeParams.filter);
+            };
+
+            ctrl.apply = function(bClose)
+            {
+                if (typeof(ctrl.clientId) === 'undefined')
+                {
+                    // Create new client record
+                    api.create(ctrl.client, function(data)
+                    {
+                        ctrl.clientId = data.id;
+
+                        if (bClose)
+                        {
+                            ctrl.close();
+                        }
+
+                        firstTime();
+                    });
+                }
+                else
+                {
+                    // Update existing client record
+                    api.update(ctrl.clientId, ctrl.client, function()
+                    {
+                        if (bClose)
+                        {
+                            ctrl.close();
+                        }
+
+                        firstTime();
+                    });
+                }
+            };
+
+            ctrl.delete = function()
+            {
+                if (typeof(ctrl.clientId) === 'undefined')
+                {
+                    // Abandon new/never created client record
+                    ctrl.close();
+                }
+                else
+                {
+                    // Delete existing client record
+                    api.delete(ctrl.clientId, function()
+                    {
+                        ctrl.close();
+                        firstTime();
+                    });
+                }
+            };
+
+        });
+
+		angular.injector(['myApp']).get('api').databaseReady(function()
+		{
+			/*global document*/
+			angular.element(document).ready(function()
+			{
+				angular.bootstrap(document, ['myApp']);
+			});
+		});
+
+    </script>
+</head>
+
+<body>
+    <a href="https://github.com/Antony74/ThreeTieredExample">
+        <img style="position: absolute; top: 0; right: 0; border: 0;"
+             src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67"
+             alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
+    </a>
+    <div ng-view></div>
+</body>
+</html>
+
